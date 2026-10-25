@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "environment": "local",
+  "base_url": "http://127.0.0.1:8765",
+  "actors": {
+    "owner": {"token_env": "AUTHMATRIX_OWNER_TOKEN"},
+    "other": {"token_env": "AUTHMATRIX_OTHER_TOKEN"},
+    "anonymous": {"token_env": null}
+  },
+  "cases": [
+    {"id": "owner-read", "actor": "owner", "method": "GET", "path": "/documents/1", "expect_status": [200]},
+    {"id": "cross-owner-denied", "actor": "other", "method": "GET", "path": "/documents/1", "expect_status": [403]},
+    {"id": "anonymous-denied", "actor": "anonymous", "method": "GET", "path": "/documents/1", "expect_status": [401]}
+  ]
+}
