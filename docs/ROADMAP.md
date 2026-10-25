@@ -12,8 +12,8 @@ No marketing, sales, revenue or outreach tasks are in this plan.
 - [x] Synthetic vulnerable/fixed API, integration tests, docs and CI workflow.
 
 Acceptance: local test suite passes; cross-owner failure becomes a verified
-fail→pass while owner and anonymous controls stay passing. CI is configured;
-GitHub execution is pending publication. No real staging API has been tested.
+fail→pass while owner and anonymous controls stay passing. Hosted CI passed on
+Python 3.11–3.14; see [validation](VALIDATION.md). No real staging API has been tested.
 
 ## M1 — Stronger assertions
 

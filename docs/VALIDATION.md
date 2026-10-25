@@ -18,9 +18,15 @@
   altered actors/expectations and a changed source matrix. Comparison runs offline
   without credentials. The installed CLI also verified the updated comparison flow.
 
+## Hosted verification
+
+[GitHub Actions run 40226220327](https://github.com/ahmetburaki/authmatrix-cli/actions/runs/40226220327)
+passed all four jobs on Python 3.11, 3.12, 3.13 and 3.14 for commit
+`2e6b358b4c655925b197e2cb5f20cf4f2bb6162e`. Each job installed the package,
+ran all 16 tests and validated the example matrix using the installed CLI.
+
 ## Pending / limitations
 
-- Hosted GitHub CI and Python 3.11–3.13 runs are configured but not executed here.
 - Verification uses only the synthetic loopback API; no external APIs were contacted.
 - Exact HTTP status expectations do not detect data leaks hidden in 200 responses.
 - No signed evidence, endpoint discovery, mutations or whole-run deadline yet.
