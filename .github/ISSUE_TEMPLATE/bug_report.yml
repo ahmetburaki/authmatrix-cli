@@ -1,0 +1,18 @@
+name: Bug report
+description: Report a reproducible problem with a synthetic local example.
+title: "bug: "
+body:
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+      description: Include the command, exit code and Python version. Omit credentials and private target details.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Local reproduction
+      description: Use a minimal synthetic API and sanitized matrix. Do not attach private evidence or API responses.
+    validations:
+      required: true
