@@ -69,10 +69,10 @@ class CoreTests(unittest.TestCase):
         self.assertEqual([c["outcome"] for c in before["cases"]], ["pass", "fail", "pass"])
         self.server.vulnerable = False
         after = run(self.matrix)
-        self.assertTrue(compare(before, after)["proof_of_fix"])
-        self.assertEqual(compare(before, after)["fixed"], ["other"])
-        self.assertEqual(compare(after, before)["regressions"], ["other"])
-        self.assertFalse(compare(after, after)["proof_of_fix"])
+        self.assertTrue(compare(before, after, self.matrix)["proof_of_fix"])
+        self.assertEqual(compare(before, after, self.matrix)["fixed"], ["other"])
+        self.assertEqual(compare(after, before, self.matrix)["regressions"], ["other"])
+        self.assertFalse(compare(after, after, self.matrix)["proof_of_fix"])
 
     def test_evidence_minimization(self):
         self.matrix["cases"][0]["path"] = "/resource?password=sensitive-query"
@@ -141,22 +141,22 @@ class CoreTests(unittest.TestCase):
             report = run(self.matrix)
         self.assertTrue(all(c["outcome"] == "error" for c in report["cases"]))
         self.assertNotIn("secret", json.dumps(report))
-        self.assertFalse(compare(report, report)["proof_of_fix"])
+        self.assertFalse(compare(report, report, self.matrix)["proof_of_fix"])
 
     def test_compare_refuses_changed_matrix_and_tampering(self):
         before = run(self.matrix)
         after = copy.deepcopy(before)
         after["matrix_sha256"] = "0" * 64
         with self.assertRaises(ConfigError):
-            compare(before, after)
+            compare(before, after, self.matrix)
         after = copy.deepcopy(before)
         after["cases"].pop()
         with self.assertRaises(ConfigError):
-            compare(before, after)
+            compare(before, after, self.matrix)
         after = copy.deepcopy(before)
         after["cases"][1]["outcome"] = "pass"
         with self.assertRaises(ConfigError):
-            compare(before, after)
+            compare(before, after, self.matrix)
 
     def test_cli_roundtrip_exit_codes_and_file_permissions(self):
         with tempfile.TemporaryDirectory() as temp, contextlib.redirect_stdout(io.StringIO()):
@@ -171,11 +171,49 @@ class CoreTests(unittest.TestCase):
             self.assertEqual(before.stat().st_mode & 0o777, 0o600)
             self.server.vulnerable = False
             self.assertEqual(main(["run", str(matrix), "--authorized", "--output", str(after)]), 0)
-            self.assertEqual(main(["compare", str(before), str(after)]), 0)
-            self.assertEqual(main(["compare", str(after), str(after)]), 1)
+            self.assertEqual(main(["compare", str(before), str(after), "--matrix", str(matrix)]), 0)
+            self.assertEqual(main(["compare", str(after), str(after), "--matrix", str(matrix)]), 1)
             original = before.read_bytes()
             self.assertEqual(main(["run", str(matrix), "--authorized", "--output", str(before)]), 2)
             self.assertEqual(before.read_bytes(), original)
+
+    def test_compare_rejects_same_missing_case_in_both_reports(self):
+        before = run(self.matrix)
+        self.server.vulnerable = False
+        after = run(self.matrix)
+        for report in (before, after):
+            report["cases"] = [c for c in report["cases"] if c["id"] != "owner"]
+        with self.assertRaises(ConfigError):
+            compare(before, after, self.matrix)
+
+    def test_compare_checks_actor_expectation_and_case_against_matrix(self):
+        baseline = run(self.matrix)
+        self.server.vulnerable = False
+        current = run(self.matrix)
+        for field, value in (("id", "renamed"), ("actor", "anonymous"), ("expected", [200, 201])):
+            with self.subTest(field=field):
+                before, after = copy.deepcopy(baseline), copy.deepcopy(current)
+                for report in (before, after):
+                    report["cases"][0][field] = value
+                with self.assertRaises(ConfigError):
+                    compare(before, after, self.matrix)
+
+    def test_compare_works_offline_without_credentials(self):
+        before = run(self.matrix)
+        self.server.vulnerable = False
+        after = run(self.matrix)
+        with patch.dict(os.environ, {}, clear=True), patch(
+            "authmatrix.core.http.client.HTTPConnection.request",
+            side_effect=AssertionError("Comparison must not send requests"),
+        ):
+            self.assertTrue(compare(before, after, self.matrix)["proof_of_fix"])
+
+    def test_compare_rejects_changed_source_matrix(self):
+        report = run(self.matrix)
+        changed = copy.deepcopy(self.matrix)
+        changed["cases"][0]["path"] = "/different-resource"
+        with self.assertRaises(ConfigError):
+            compare(report, report, changed)
 
     def test_cli_bad_input_no_traceback_or_secret(self):
         with tempfile.TemporaryDirectory() as temp:

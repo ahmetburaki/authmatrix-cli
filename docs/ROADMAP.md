@@ -1,6 +1,6 @@
 # Milestones and commit-sized backlog
 
-Local issue drafts for a future GitHub repository. No remote issues or milestones
+Local issue drafts for `ahmetburaki/authmatrix-cli`. No remote issues or milestones
 have been created. Build useful, reviewable changes; never manufacture activity.
 No marketing, sales, revenue or outreach tasks are in this plan.
 
@@ -24,9 +24,9 @@ GitHub execution is pending publication. No real staging API has been tested.
 2. **Issue: Define tenant and role coverage** (`test: cover tenant and role isolation`)
    - Extend synthetic API with two tenants and two roles; explicit matrix cases.
    - Accept when each negative has an appropriate positive control and a failing fixture.
-3. **Issue: Validate evidence against its source matrix** (`feat: verify evidence coverage`)
-   - Add matrix input to offline comparison and require complete matching coverage.
-   - Accept when fabricated missing/renamed cases and altered expectations are rejected.
+3. **Implemented: Validate evidence against its source matrix** (`feat: verify evidence coverage`)
+   - Required `--matrix` added to offline comparison with complete matching coverage.
+   - Verified: missing/renamed cases, altered actors/expectations and changed source matrices are rejected.
    - This does not replace future signing or establish independent trust.
 
 ## M2 — Operational hardening
@@ -47,5 +47,5 @@ GitHub execution is pending publication. No real staging API has been tested.
 Each issue should become one focused branch/PR with a failing reproduction,
 implementation, relevant tests and a short explanation of behavior and limits.
 Use real completed work as the activity record. Keep credential files and local
-run evidence out of commits. Select a remote repository before pushing; the current
-starter is local. Keep release tags pending the M0 checks on hosted CI and license decision.
+run evidence out of commits. Target `ahmetburaki/authmatrix-cli`; the local origin is configured, but remote
+creation and push are pending GitHub authentication. Keep release tags pending the M0 checks on hosted CI and license decision.

@@ -2,7 +2,7 @@
 
 ## Verified
 
-- Python 3.14.7: 12 unittest integration/CLI tests passed.
+- Python 3.14.7: 16 unittest integration/CLI tests passed.
 - Built wheel and installed into an isolated Python 3.14 environment.
 - Installed `authmatrix validate examples/matrix.json` exited 0.
 - Installed CLI exercised against the provided synthetic loopback API:
@@ -14,6 +14,9 @@
 - Tests cover output overwrite prevention, authorization confirmation, invalid
   targets/configuration, token injection/missing credentials, transport errors,
   redirect handling, evidence minimization and inconsistent comparisons.
+- Source-matrix checks reject identical omissions from both reports, renamed cases,
+  altered actors/expectations and a changed source matrix. Comparison runs offline
+  without credentials. The installed CLI also verified the updated comparison flow.
 
 ## Pending / limitations
 
@@ -21,7 +24,8 @@
 - Verification uses only the synthetic loopback API; no external APIs were contacted.
 - Exact HTTP status expectations do not detect data leaks hidden in 200 responses.
 - No signed evidence, endpoint discovery, mutations or whole-run deadline yet.
-- Remote repository, public issues/milestones and release license remain unselected.
+- `ahmetburaki/authmatrix-cli` selected and configured as local origin. Remote creation,
+  push and public issues/milestones await GitHub authentication. License remains unselected.
 
 See ROADMAP.md for issue drafts and acceptance criteria. This is a tested local
 MVP, not a published release or a claim of comprehensive API security coverage.

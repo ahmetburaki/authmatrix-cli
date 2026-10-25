@@ -160,11 +160,22 @@ def check_report(report):
     return report
 
 
-def compare(before, after):
+def compare(before, after, matrix):
+    # Offline coverage validation needs no credentials or network access.
+    validate(matrix)
     check_report(before)
     check_report(after)
-    if before["matrix_sha256"] != after["matrix_sha256"]:
-        raise ConfigError("Evidence matrices differ; comparison refused")
+    digest = fingerprint(matrix)
+    definitions = {c["id"]: c for c in matrix["cases"]}
+    for report in (before, after):
+        if report["matrix_sha256"] != digest:
+            raise ConfigError("Evidence does not match the source matrix")
+        observed = {c["id"]: c for c in report["cases"]}
+        if observed.keys() != definitions.keys() or any(
+            (observed[k]["actor"], observed[k]["expected"]) !=
+            (definitions[k]["actor"], definitions[k]["expect_status"]) for k in definitions
+        ):
+            raise ConfigError("Evidence does not cover the source matrix")
     old = {c["id"]: c for c in before["cases"]}
     new = {c["id"]: c for c in after["cases"]}
     if old.keys() != new.keys() or any(

@@ -33,6 +33,7 @@ def main(argv=None):
     diff = sub.add_parser("compare")
     diff.add_argument("before")
     diff.add_argument("after")
+    diff.add_argument("--matrix", required=True, help="Source matrix used by both runs")
     args = parser.parse_args(argv)
     try:
         if args.command == "validate":
@@ -50,7 +51,7 @@ def main(argv=None):
                       for state in ("pass", "fail", "error")}
             print(json.dumps(counts))
             return 2 if counts["error"] else 1 if counts["fail"] else 0
-        result = compare(load(args.before), load(args.after))
+        result = compare(load(args.before), load(args.after), load(args.matrix))
         print(json.dumps(result))
         return 0 if result["proof_of_fix"] else 1
     except (ConfigError, OSError, ValueError, TypeError, KeyError, AttributeError, RecursionError):

@@ -53,7 +53,7 @@ Then in terminal B:
 
 ```sh
 python3 -m authmatrix run examples/matrix.json --authorized --output evidence/after.json
-python3 -m authmatrix compare evidence/before.json evidence/after.json
+python3 -m authmatrix compare evidence/before.json evidence/after.json --matrix examples/matrix.json
 ```
 
 Expected: `fixed: ["cross-owner-denied"]`, `proof_of_fix: true`, exit 0.
@@ -100,7 +100,10 @@ A digest is for matching configurations, not anonymization or evidence signing.
 Evidence is private by default, ignored by Git, created exclusively with mode 0600
 (on POSIX), and never overwritten. Review even minimized evidence before sharing.
 
-`compare` requires identical matrix digests and case definitions. Proof of fix
+`compare` requires `--matrix` and checks both reports against its digest and full
+case definitions. Missing, renamed or redefined cases are rejected even if both
+reports were changed the same way. Comparison is offline and does not need tokens.
+This check does not authenticate observations; unsigned files can still be forged. Proof of fix
 requires at least one observed fail→pass and all current cases passing. Evidence
 is unsigned local data; this is regression validation, not independent attestation.
 
@@ -113,3 +116,6 @@ is unsigned local data; this is regression validation, not independent attestati
 See [roadmap](docs/ROADMAP.md), [contributing](CONTRIBUTING.md) and
 [engineering decisions](docs/DECISIONS.md). Current focus: quality, reproducibility,
 reviewable GitHub changes. No acquisition, revenue, marketing or outreach work.
+
+Repository owner: [ahmetburaki](https://github.com/ahmetburaki). The intended remote
+is `ahmetburaki/authmatrix-cli`; publication is pending GitHub authentication.

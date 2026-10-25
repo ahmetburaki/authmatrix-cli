@@ -18,8 +18,9 @@ operators remain responsible for target permission and endpoint side effects.
 ## 003 — Minimal, comparable evidence
 
 Persist status observations, generic labels and a canonical configuration digest.
-Do not retain response content, endpoints or credentials. Reject cross-matrix
-comparisons and internally contradictory outcomes. A proof-of-fix result requires
+Do not retain response content, endpoints or credentials. Require the source
+matrix for offline comparison; reject incomplete coverage, altered definitions,
+cross-matrix comparisons and internally contradictory outcomes. A proof-of-fix result requires
 an actual failing baseline, passing rerun and passing positive controls as declared
 by the operator. Evidence is not signed, and HTTP status alone cannot validate
 body-level authorization. Preserve those limits in every release claim.
