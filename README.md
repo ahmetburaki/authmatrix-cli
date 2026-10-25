@@ -117,5 +117,6 @@ See [roadmap](docs/ROADMAP.md), [contributing](CONTRIBUTING.md) and
 [engineering decisions](docs/DECISIONS.md). Current focus: quality, reproducibility,
 reviewable GitHub changes. No acquisition, revenue, marketing or outreach work.
 
-Repository owner: [ahmetburaki](https://github.com/ahmetburaki). The intended remote
-is `ahmetburaki/authmatrix-cli`; publication is pending GitHub authentication.
+Repository: [ahmetburaki/authmatrix-cli](https://github.com/ahmetburaki/authmatrix-cli).
+See [open issues](https://github.com/ahmetburaki/authmatrix-cli/issues) and
+[milestones](https://github.com/ahmetburaki/authmatrix-cli/milestones) for the next work.

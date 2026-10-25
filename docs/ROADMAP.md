@@ -1,7 +1,7 @@
 # Milestones and commit-sized backlog
 
-Local issue drafts for `ahmetburaki/authmatrix-cli`. No remote issues or milestones
-have been created. Build useful, reviewable changes; never manufacture activity.
+Work is tracked in [GitHub issues](https://github.com/ahmetburaki/authmatrix-cli/issues)
+and [milestones](https://github.com/ahmetburaki/authmatrix-cli/milestones). Build useful, reviewable changes; never manufacture activity.
 No marketing, sales, revenue or outreach tasks are in this plan.
 
 ## M0 — Reproducible authorization CLI (implemented)
@@ -17,11 +17,11 @@ GitHub execution is pending publication. No real staging API has been tested.
 
 ## M1 — Stronger assertions
 
-1. **Issue: Add bounded JSON field assertions** (`feat: assert selected JSON fields`)
+1. **[Issue #1: Add bounded JSON field assertions](https://github.com/ahmetburaki/authmatrix-cli/issues/1)** (`feat: assert selected JSON fields`)
    - Opt-in allowlisted assertions without storing field values.
    - Accept when same-status data leaks are caught, large bodies are bounded,
      and sensitive values cannot reach evidence or errors.
-2. **Issue: Define tenant and role coverage** (`test: cover tenant and role isolation`)
+2. **[Issue #2: Define tenant and role coverage](https://github.com/ahmetburaki/authmatrix-cli/issues/2)** (`test: cover tenant and role isolation`)
    - Extend synthetic API with two tenants and two roles; explicit matrix cases.
    - Accept when each negative has an appropriate positive control and a failing fixture.
 3. **Implemented: Validate evidence against its source matrix** (`feat: verify evidence coverage`)
@@ -31,7 +31,7 @@ GitHub execution is pending publication. No real staging API has been tested.
 
 ## M2 — Operational hardening
 
-4. **Issue: Enforce wall-clock run and request deadlines** (`feat: bound total execution time`)
+4. **[Issue #3: Enforce wall-clock run and request deadlines](https://github.com/ahmetburaki/authmatrix-cli/issues/3)** (`feat: bound total execution time`)
    - Accept when slow-header fixtures terminate within the documented budget.
 5. **Issue: Design hostname staging support** (`feat: pin validated staging addresses`)
    - Define explicit host allowlist, IP pinning, TLS identity and custom CA handling.
@@ -47,5 +47,5 @@ GitHub execution is pending publication. No real staging API has been tested.
 Each issue should become one focused branch/PR with a failing reproduction,
 implementation, relevant tests and a short explanation of behavior and limits.
 Use real completed work as the activity record. Keep credential files and local
-run evidence out of commits. Target `ahmetburaki/authmatrix-cli`; the local origin is configured, but remote
-creation and push are pending GitHub authentication. Keep release tags pending the M0 checks on hosted CI and license decision.
+run evidence out of commits. Use `ahmetburaki/authmatrix-cli` as the origin. Review hosted CI results for each
+commit before building on it. Keep release tags pending the M0 checks on hosted CI and license decision.

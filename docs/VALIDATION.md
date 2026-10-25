@@ -24,8 +24,8 @@
 - Verification uses only the synthetic loopback API; no external APIs were contacted.
 - Exact HTTP status expectations do not detect data leaks hidden in 200 responses.
 - No signed evidence, endpoint discovery, mutations or whole-run deadline yet.
-- `ahmetburaki/authmatrix-cli` selected and configured as local origin. Remote creation,
-  push and public issues/milestones await GitHub authentication. License remains unselected.
+- Repository `ahmetburaki/authmatrix-cli` created with two milestones and three issues.
+  License remains unselected.
 
 See ROADMAP.md for issue drafts and acceptance criteria. This is a tested local
 MVP, not a published release or a claim of comprehensive API security coverage.
