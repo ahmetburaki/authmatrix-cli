@@ -24,8 +24,11 @@ Python 3.11–3.14; see [validation](VALIDATION.md). No real staging API has bee
    - Local and Python 3.11–3.14 hosted acceptance passed; [PR #4](https://github.com/ahmetburaki/authmatrix-cli/pull/4)
      is ready for review. See [JSON assertions](JSON_ASSERTIONS.md) and [validation](JSON_VALIDATION.md).
 2. **[Issue #2: Define tenant and role coverage](https://github.com/ahmetburaki/authmatrix-cli/issues/2)** (`test: cover tenant and role isolation`)
-   - Extend synthetic API with two tenants and two roles; explicit matrix cases.
-   - Accept when each negative has an appropriate positive control and a failing fixture.
+   - Implemented on `test/tenant-role-isolation`: two-tenant/two-role loopback
+     fixture and 21 explicit cases, with same-resource positive controls for every denial.
+   - Independent fault modes verify exact failing IDs; partial fixes cannot claim complete proof.
+   - Local validation passed; see [tenant/role guide](TENANT_ROLES.md).
+   - Built on PR #4 while its JSON assertion changes await merge.
 3. **Implemented: Validate evidence against its source matrix** (`feat: verify evidence coverage`)
    - Required `--matrix` added to offline comparison with complete matching coverage.
    - Verified: missing/renamed cases, altered actors/expectations and changed source matrices are rejected.

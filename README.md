@@ -75,6 +75,10 @@ For APIs returning 200 with unauthorized fields, add [JSON assertions](docs/JSON
 for field presence, absence or scalar equality; see [examples/json-matrix.json](examples/json-matrix.json).
 Do not accept 200 and 403 together for a denial case.
 
+The [tenant/role example](docs/TENANT_ROLES.md) adds a loopback API with two
+tenants, two roles and 21 explicit cases. Independent ownership, tenant and role
+fault modes demonstrate which cases fail, with positive controls for every denial.
+
 ## Target and execution boundary
 
 - Only explicit IP origins: loopback for `local`; loopback or RFC1918/IPv6 ULA
