@@ -21,7 +21,8 @@ Python 3.11–3.14; see [validation](VALIDATION.md). No real staging API has bee
    - Opt-in allowlisted assertions without storing field values.
    - Implemented on `feat/bounded-json-assertions`: same-status leak detection,
      bounded JSON reading, minimized schema-2 evidence and compatibility tests.
-   - Acceptance and PR review are pending; see [JSON assertions](JSON_ASSERTIONS.md).
+   - Local and Python 3.11–3.14 hosted acceptance passed; [PR #4](https://github.com/ahmetburaki/authmatrix-cli/pull/4)
+     is ready for review. See [JSON assertions](JSON_ASSERTIONS.md) and [validation](JSON_VALIDATION.md).
 2. **[Issue #2: Define tenant and role coverage](https://github.com/ahmetburaki/authmatrix-cli/issues/2)** (`test: cover tenant and role isolation`)
    - Extend synthetic API with two tenants and two roles; explicit matrix cases.
    - Accept when each negative has an appropriate positive control and a failing fixture.

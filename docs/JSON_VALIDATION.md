@@ -23,8 +23,11 @@ contract consistent across supported versions.
 
 ## Hosted checks
 
-Pending the feature branch's GitHub Actions run. CI tests Python 3.11–3.14 and
-validates both example matrices with the installed CLI.
+[GitHub Actions run 40496945126](https://github.com/ahmetburaki/authmatrix-cli/actions/runs/40496945126)
+passed all four Python 3.11–3.14 jobs for implementation/documentation commit
+`6554aa72a7d4cac36a58cb100bc071e7ffe2b6a0`. Each job installed the package, ran
+all 30 tests and validated both example matrices with the installed CLI.
+The feature is proposed in [PR #4](https://github.com/ahmetburaki/authmatrix-cli/pull/4).
 
 ## Limits
 
