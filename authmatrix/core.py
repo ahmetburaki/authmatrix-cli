@@ -8,6 +8,8 @@ import re
 from datetime import datetime, timezone
 from urllib.parse import urlsplit
 
+from .json_checks import check_response, error_results, valid_checks
+
 
 class ConfigError(ValueError):
     pass
@@ -68,7 +70,8 @@ def validate(matrix):
         raise ConfigError("Expected 1-200 cases")
     ids = set()
     for case in cases:
-        exact(case, ("id", "actor", "method", "path", "expect_status"))
+        optional = ("assert_json",) if isinstance(case, dict) and "assert_json" in case else ()
+        exact(case, ("id", "actor", "method", "path", "expect_status") + optional)
         label(case["id"])
         if case["id"] in ids:
             raise ConfigError("Duplicate case ID")
@@ -77,6 +80,8 @@ def validate(matrix):
             raise ConfigError("Unknown actor")
         if case["method"] not in ("GET", "HEAD"):
             raise ConfigError("MVP supports GET and HEAD only")
+        if optional and (case["method"] != "GET" or not valid_checks(case["assert_json"], LABEL)):
+            raise ConfigError("Invalid JSON assertions; GET is required")
         path = case["path"]
         if (not isinstance(path, str) or not path.startswith("/")
                 or path.startswith("//") or "#" in path or "\\" in path
@@ -110,6 +115,9 @@ def run(matrix):
         conn = cls(url.hostname, url.port, timeout=5)
         result = {"id": case["id"], "actor": case["actor"], "expected": case["expect_status"],
                   "actual": None, "outcome": "error"}
+        checks = case.get("assert_json")
+        if checks:
+            result["assertions"] = error_results(checks)
         try:
             token = tokens[case["actor"]]
             headers = {"Authorization": "Bearer " + token} if token else {}
@@ -117,19 +125,30 @@ def run(matrix):
             response = conn.getresponse()
             result["actual"] = response.status
             result["outcome"] = "pass" if response.status in case["expect_status"] else "fail"
-            # Do not read/store response bodies, cookies or headers. Never follow redirects.
+            if checks:
+                result["assertions"] = check_response(response, checks)
+                outcomes = [c["outcome"] for c in result["assertions"]]
+                if "error" in outcomes:
+                    result["outcome"] = "error"
+                    result["error"] = "response_error"
+                elif "fail" in outcomes:
+                    result["outcome"] = "fail"
+            # Status-only cases never read bodies. No raw content is persisted.
+            # Never follow redirects, decompress bodies or print server diagnostics.
         except (OSError, http.client.HTTPException, ValueError):
             result["error"] = "transport_error"
         finally:
             conn.close()
         results.append(result)
-    return {"schema_version": 1, "matrix_sha256": fingerprint(matrix),
+    version = 2 if any("assert_json" in c for c in matrix["cases"]) else 1
+    return {"schema_version": version, "matrix_sha256": fingerprint(matrix),
             "created_at": datetime.now(timezone.utc).isoformat(), "cases": results}
 
 
 def check_report(report):
     exact(report, ("schema_version", "matrix_sha256", "created_at", "cases"))
-    if type(report["schema_version"]) is not int or report["schema_version"] != 1:
+    version = report["schema_version"]
+    if type(version) is not int or version not in (1, 2):
         raise ConfigError("Unsupported evidence schema")
     if not isinstance(report["matrix_sha256"], str) or not re.fullmatch(r"[0-9a-f]{64}", report["matrix_sha256"]):
         raise ConfigError("Invalid matrix digest")
@@ -140,6 +159,13 @@ def check_report(report):
     seen = set()
     for case in report["cases"]:
         fields = ("id", "actor", "expected", "actual", "outcome")
+        if not isinstance(case, dict):
+            raise ConfigError("Invalid evidence case")
+        has_assertions = "assertions" in case
+        if has_assertions:
+            if version != 2:
+                raise ConfigError("JSON assertions require evidence schema 2")
+            fields += ("assertions",)
         exact(case, fields + (("error",) if case.get("outcome") == "error" else ()))
         label(case["id"])
         label(case["actor"])
@@ -151,11 +177,28 @@ def check_report(report):
                 any(type(s) is not int or not 100 <= s <= 599 for s in expected)):
             raise ConfigError("Invalid evidence expectation")
         actual = case["actual"]
+        states = []
+        if has_assertions:
+            assertions = case["assertions"]
+            if not isinstance(assertions, list) or not 1 <= len(assertions) <= 32:
+                raise ConfigError("Invalid assertion evidence")
+            assertion_ids = set()
+            for assertion in assertions:
+                exact(assertion, ("id", "outcome"))
+                label(assertion["id"])
+                if assertion["id"] in assertion_ids or assertion["outcome"] not in ("pass", "fail", "error"):
+                    raise ConfigError("Invalid assertion evidence")
+                assertion_ids.add(assertion["id"])
+                states.append(assertion["outcome"])
         if case["outcome"] == "error":
-            if actual is not None or case["error"] != "transport_error":
-                raise ConfigError("Inconsistent transport evidence")
+            transport = actual is None and case["error"] == "transport_error"
+            response = (has_assertions and type(actual) is int and 100 <= actual <= 599
+                        and case["error"] == "response_error")
+            if not (transport or response) or (has_assertions and any(s != "error" for s in states)):
+                raise ConfigError("Inconsistent error evidence")
         elif (type(actual) is not int or not 100 <= actual <= 599 or
-              case["outcome"] != ("pass" if actual in expected else "fail")):
+              "error" in states or case["outcome"] !=
+              ("pass" if actual in expected and all(s == "pass" for s in states) else "fail")):
             raise ConfigError("Inconsistent evidence outcome")
     return report
 
@@ -167,8 +210,9 @@ def compare(before, after, matrix):
     check_report(after)
     digest = fingerprint(matrix)
     definitions = {c["id"]: c for c in matrix["cases"]}
+    version = 2 if any("assert_json" in c for c in matrix["cases"]) else 1
     for report in (before, after):
-        if report["matrix_sha256"] != digest:
+        if report["matrix_sha256"] != digest or report["schema_version"] != version:
             raise ConfigError("Evidence does not match the source matrix")
         observed = {c["id"]: c for c in report["cases"]}
         if observed.keys() != definitions.keys() or any(
@@ -176,6 +220,12 @@ def compare(before, after, matrix):
             (definitions[k]["actor"], definitions[k]["expect_status"]) for k in definitions
         ):
             raise ConfigError("Evidence does not cover the source matrix")
+        for name, definition in definitions.items():
+            checks = definition.get("assert_json", [])
+            evidence = observed[name]
+            if (("assertions" in evidence) != bool(checks) or
+                    [a["id"] for a in evidence.get("assertions", [])] != [a["id"] for a in checks]):
+                raise ConfigError("Evidence does not cover the source assertions")
     old = {c["id"]: c for c in before["cases"]}
     new = {c["id"]: c for c in after["cases"]}
     if old.keys() != new.keys() or any(

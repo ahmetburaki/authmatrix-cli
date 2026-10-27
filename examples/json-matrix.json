@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "environment": "local",
+  "base_url": "http://127.0.0.1:8765",
+  "actors": {
+    "owner": {"token_env": "AUTHMATRIX_OWNER_TOKEN"},
+    "other": {"token_env": "AUTHMATRIX_OTHER_TOKEN"},
+    "anonymous": {"token_env": null}
+  },
+  "cases": [
+    {
+      "id": "owner-private-field", "actor": "owner", "method": "GET",
+      "path": "/profiles/1", "expect_status": [200],
+      "assert_json": [
+        {"id": "own-field-visible", "path": ["private_email"], "op": "present"}
+      ]
+    },
+    {
+      "id": "other-public-view", "actor": "other", "method": "GET",
+      "path": "/profiles/1", "expect_status": [200],
+      "assert_json": [
+        {"id": "public-view-present", "path": ["display_name"], "op": "equals", "value": "demo"},
+        {"id": "restricted-field-hidden", "path": ["private_email"], "op": "absent"}
+      ]
+    },
+    {
+      "id": "anonymous-denied", "actor": "anonymous", "method": "GET",
+      "path": "/profiles/1", "expect_status": [401]
+    }
+  ]
+}
