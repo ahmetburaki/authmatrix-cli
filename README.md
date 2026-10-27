@@ -6,7 +6,8 @@ with its own package, command-line interface and release roadmap. The name is
 provisional.
 
 Define actor/resource expectations, detect a mismatch, apply your API fix, rerun
-and compare evidence. The MVP supports GET/HEAD and exact expected status codes.
+and compare evidence. The MVP supports GET/HEAD, exact expected status codes
+and opt-in JSON field assertions on GET responses.
 It does not discover endpoints or prove the absence of authorization bugs.
 
 ## Quick start (Python 3.11+)
@@ -70,7 +71,8 @@ checked before any network request. Keep labels generic and free of secrets.
 
 Use owner, other-owner, anonymous, role and tenant cases explicitly. Include
 positive controls so denial of every request cannot make the whole suite pass.
-An API returning 200 with an error body needs richer assertions in a future version.
+For APIs returning 200 with unauthorized fields, add [JSON assertions](docs/JSON_ASSERTIONS.md)
+for field presence, absence or scalar equality; see [examples/json-matrix.json](examples/json-matrix.json).
 Do not accept 200 and 403 together for a denial case.
 
 ## Target and execution boundary
@@ -86,14 +88,16 @@ Do not accept 200 and 403 together for a denial case.
   timeout per operation, no redirects, retries, proxy discovery or TLS bypass.
   Socket timeout is not a whole-run deadline; a slowly streaming header can extend
   execution. GET endpoints must still be reviewed for side effects.
-- Tokens go directly to the specified origin. Response bodies are never read;
-  response headers are parsed by Python but never persisted. No scanning or
+- Tokens go directly to the specified origin. Status-only cases never read bodies.
+  Asserted GET cases read at most 64 KiB plus one sentinel byte and reject invalid
+  or oversized JSON. Raw bodies and response headers are never persisted. No scanning or
   automatic endpoint enumeration takes place.
 
 ## Evidence and exit codes
 
 Evidence records only schema version, UTC time, matrix SHA-256, generic actor/case
-IDs, expected and actual statuses, outcome and a generic transport error. It omits
+IDs, expected and actual statuses, outcomes and generic error codes. JSON-asserted
+runs use evidence schema 2 and add only generic assertion IDs and outcomes. It omits
 origins, paths, queries, token values, environment variable names, response bodies,
 headers and exception details. IDs are user-supplied and must not contain secrets.
 A digest is for matching configurations, not anonymization or evidence signing.
@@ -110,7 +114,7 @@ is unsigned local data; this is regression validation, not independent attestati
 | Command | 0 | 1 | 2 |
 | --- | --- | --- | --- |
 | validate | valid | — | invalid input |
-| run | all passed | expectation mismatch | transport/config/output error |
+| run | all passed | expectation mismatch | transport/response/config/output error |
 | compare | demonstrated fix, all pass | no demonstrated complete fix | invalid/incompatible evidence |
 
 See [roadmap](docs/ROADMAP.md), [contributing](CONTRIBUTING.md) and

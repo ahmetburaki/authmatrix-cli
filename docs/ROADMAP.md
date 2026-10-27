@@ -19,8 +19,9 @@ Python 3.11–3.14; see [validation](VALIDATION.md). No real staging API has bee
 
 1. **[Issue #1: Add bounded JSON field assertions](https://github.com/ahmetburaki/authmatrix-cli/issues/1)** (`feat: assert selected JSON fields`)
    - Opt-in allowlisted assertions without storing field values.
-   - Accept when same-status data leaks are caught, large bodies are bounded,
-     and sensitive values cannot reach evidence or errors.
+   - Implemented on `feat/bounded-json-assertions`: same-status leak detection,
+     bounded JSON reading, minimized schema-2 evidence and compatibility tests.
+   - Acceptance and PR review are pending; see [JSON assertions](JSON_ASSERTIONS.md).
 2. **[Issue #2: Define tenant and role coverage](https://github.com/ahmetburaki/authmatrix-cli/issues/2)** (`test: cover tenant and role isolation`)
    - Extend synthetic API with two tenants and two roles; explicit matrix cases.
    - Accept when each negative has an appropriate positive control and a failing fixture.

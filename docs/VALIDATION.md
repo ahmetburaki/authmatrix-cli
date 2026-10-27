@@ -1,5 +1,8 @@
 # Local acceptance — 2026-10-25
 
+Historical status-only acceptance. For the October 27 JSON assertion feature,
+see [JSON acceptance](JSON_VALIDATION.md).
+
 ## Verified
 
 - Python 3.14.7: 16 unittest integration/CLI tests passed.
