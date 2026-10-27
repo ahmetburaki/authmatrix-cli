@@ -27,7 +27,8 @@ Python 3.11–3.14; see [validation](VALIDATION.md). No real staging API has bee
    - Implemented on `test/tenant-role-isolation`: two-tenant/two-role loopback
      fixture and 21 explicit cases, with same-resource positive controls for every denial.
    - Independent fault modes verify exact failing IDs; partial fixes cannot claim complete proof.
-   - Local validation passed; see [tenant/role guide](TENANT_ROLES.md).
+   - Local and Python 3.11–3.14 hosted validation passed; [PR #5](https://github.com/ahmetburaki/authmatrix-cli/pull/5)
+     is ready for review. See [guide](TENANT_ROLES.md) and [validation](TENANT_VALIDATION.md).
    - Built on PR #4 while its JSON assertion changes await merge.
 3. **Implemented: Validate evidence against its source matrix** (`feat: verify evidence coverage`)
    - Required `--matrix` added to offline comparison with complete matching coverage.

@@ -28,8 +28,11 @@ tokens, endpoint paths and raw response fields are not retained.
 
 ## Hosted verification
 
-Pending the tenant/role branch's GitHub Actions run. The workflow runs all tests
-and validates all three example matrices on Python 3.11–3.14.
+[GitHub Actions run 40497841441](https://github.com/ahmetburaki/authmatrix-cli/actions/runs/40497841441)
+passed all four Python 3.11–3.14 jobs for implementation/documentation commit
+`5c9872891d71a4365d877592373350613da90308`. Each job installed the package, ran
+all 37 tests and validated all three example matrices.
+The change is proposed in [PR #5](https://github.com/ahmetburaki/authmatrix-cli/pull/5).
 
 ## Integration and limits
 
