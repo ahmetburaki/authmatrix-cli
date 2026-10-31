@@ -32,9 +32,13 @@ external API is used for tests. No real-system evidence or TLS keys are committe
 
 ## Hosted verification
 
-Pending Ubuntu/Windows CI on Python 3.11–3.14. Each job first installs the base
-package and checks schema exports with optional validator imports blocked, then
-installs test extras, runs all 63 tests and validates all three example matrices.
+[All eight PR jobs passed](https://github.com/ahmetburaki/authmatrix-cli/actions/runs/41236462148)
+on Ubuntu and Windows with Python 3.11, 3.12, 3.13 and 3.14 for implementation
+revision `6850aa0dbfe72118dbbd534c6c5bcd33c9715277`. The
+[push run](https://github.com/ahmetburaki/authmatrix-cli/actions/runs/41236431526)
+also passed. Each job first installs the base package and checks schema exports
+with optional validator imports blocked, then installs test extras, runs all 63
+tests and validates all three example matrices.
 
 ## Commands
 
@@ -51,4 +55,6 @@ authmatrix validate examples/tenant-matrix.json
 git diff --check
 ```
 
-The feature branch is stacked on PR #6. Existing PRs are not merged by this change.
+[PR #7](https://github.com/ahmetburaki/authmatrix-cli/pull/7) is stacked on PR #6.
+Review and integrate #4, #5, #6, then #7, retargeting/rechecking each dependent PR.
+Existing PRs are not merged by this change.

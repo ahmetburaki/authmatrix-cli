@@ -45,4 +45,6 @@ an open implementation issue for completed work. ROADMAP.md lists later tasks.
 
 Implemented on `feat/json-schema-contracts`: bundled matrix/evidence JSON Schemas,
 offline CLI exports and fixed legacy/current compatibility fixtures. This branch
-builds on PR #6. See [contracts](SCHEMAS.md) and [acceptance](SCHEMA_VALIDATION.md).
+builds on PR #6. [PR #7](https://github.com/ahmetburaki/authmatrix-cli/pull/7) is
+ready for review after local and Ubuntu/Windows Python 3.11–3.14 acceptance.
+See [contracts](SCHEMAS.md) and [acceptance](SCHEMA_VALIDATION.md).
