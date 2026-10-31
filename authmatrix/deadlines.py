@@ -27,6 +27,7 @@ class Budget:
     def __init__(self, request_end, run_end):
         self.request_end = request_end
         self.run_end = run_end
+        self._socket_limit = None
 
     def remaining(self):
         now = time.monotonic()
@@ -37,7 +38,17 @@ class Budget:
         return min(self.request_end, self.run_end) - now
 
     def socket_timeout(self):
-        return min(IDLE_TIMEOUT, self.remaining())
+        remaining = self.remaining()
+        self._socket_limit = None if remaining > IDLE_TIMEOUT else (
+            "run_timeout" if self.run_end <= self.request_end else "request_timeout")
+        return min(IDLE_TIMEOUT, remaining)
+
+    def raise_timeout(self):
+        self.remaining()
+        # Socket timers can expire just before the monotonic clock reaches the
+        # deadline. Preserve the limit that supplied this operation's allowance.
+        if self._socket_limit is not None:
+            raise DeadlineExceeded(self._socket_limit) from None
 
 
 class _DeadlineReader(io.RawIOBase):
@@ -55,7 +66,7 @@ class _DeadlineReader(io.RawIOBase):
         try:
             count = self.stream.readinto(buffer)
         except TimeoutError:
-            self.budget.remaining()
+            self.budget.raise_timeout()
             raise
         self.budget.remaining()
         return count
@@ -104,7 +115,7 @@ class _DeadlineConnection:
         try:
             super().connect()
         except TimeoutError:
-            self.budget.remaining()
+            self.budget.raise_timeout()
             raise
         self.sock.settimeout(self.budget.socket_timeout())
 
@@ -115,7 +126,7 @@ class _DeadlineConnection:
         try:
             super().send(data)
         except TimeoutError:
-            self.budget.remaining()
+            self.budget.raise_timeout()
             raise
         self.budget.remaining()
 

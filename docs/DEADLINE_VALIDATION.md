@@ -17,10 +17,10 @@ and recorded as an error, not a late pass.
 ## Ordered verification
 
 1. Diff/compile checks: `git diff --check` and Python compilation passed.
-2. Focused security tests: all 15 deadline tests passed, including header and body
+2. Focused security tests: all 16 deadline tests passed, including header and body
    variants, verified HTTPS, default TLS rejection, delayed TCP-to-TLS allowance,
    explicit connection cleanup and non-main-thread use.
-3. Compatibility/package checks: all 52 tests passed locally on Python 3.14.7;
+3. Compatibility/package checks: all 53 tests passed locally on Python 3.14.7;
    wheel build/install and all three installed-CLI matrix validations passed.
    Legacy schema 1/2 reports compare with schema 3 using unchanged matrices.
 4. Installed CLI ran outside the source directory against an OS-selected loopback
@@ -43,6 +43,12 @@ TLS key material rather than committing it.
 
 Pending the feature branch's Ubuntu/Windows jobs on Python 3.11–3.14. Each job
 installs the package, runs the full suite and validates all three matrices.
+
+The first Windows run exposed socket timers expiring just before the monotonic
+clock crossed the configured limit. The implementation now retains the allowance's
+limiting deadline, and a deterministic regression test covers early timer expiry
+and suppression of subsequent requests after a run timeout. Ordinary inactivity
+timeouts retain their existing transport-error classification.
 
 ## Integration and remaining limits
 

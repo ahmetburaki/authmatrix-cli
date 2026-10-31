@@ -283,6 +283,23 @@ class DeadlineTests(unittest.TestCase):
         self.assertEqual(report["cases"][0]["error"], "transport_error")
         self.assertNotIn("sensitive", json.dumps(report))
 
+    def test_socket_timeout_before_clock_tick_keeps_limiting_deadline(self):
+        # Windows socket timers may expire before the deadline clock advances.
+        # A spent run allowance must also prevent dispatch of the next case.
+        self.matrix["cases"] = [self.case("first", "/fast"), self.case("last", "/never")]
+        for request, total, errors, calls in (
+                (0.5, 2, ["request_timeout", "request_timeout"], 2),
+                (2, 0.5, ["run_timeout", "not_run"], 1)):
+            with self.subTest(request=request, total=total), \
+                 patch("authmatrix.deadlines.time.monotonic", return_value=100), \
+                 patch("authmatrix.deadlines.socket.create_connection", side_effect=TimeoutError("sensitive")) as connect:
+                report = run(self.matrix, request_timeout=request, run_timeout=total)
+            self.assertEqual([c["error"] for c in report["cases"]], errors)
+            self.assertEqual(connect.call_count, calls)
+            self.assertTrue(all(c["actual"] is None for c in report["cases"]))
+            self.assertNotIn("sensitive", json.dumps(report))
+            check_report(report)
+
     def test_timeout_closes_connection_and_detached_response_descriptors(self):
         real_connect = socket.create_connection
         for secure in (False, True):

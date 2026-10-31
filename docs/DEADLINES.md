@@ -22,6 +22,9 @@ and trailers. The remaining allowance is recomputed at every raw socket receive,
 including responses whose sockets have been detached from the HTTP connection.
 TCP and TLS use the remaining allowance rather than each receiving a fresh full
 budget. Completion checks reject observations that finish after their deadline.
+If a socket timer fires just before the monotonic clock reaches its limit, the
+error keeps the request/run limit that supplied that operation's allowance.
+An exhausted run allowance prevents subsequent requests even in that interval.
 
 No signal alarms, background cancellation threads, retries or TLS bypasses are
 introduced. HTTPS continues through the standard verified TLS implementation.

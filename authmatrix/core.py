@@ -116,13 +116,14 @@ def run(matrix, *, request_timeout=deadlines.DEFAULT_REQUEST_TIMEOUT,
             raise ConfigError("Missing or invalid actor credential")
         tokens[name] = token
     results = []
+    run_exhausted = False
     for case in matrix["cases"]:
         result = {"id": case["id"], "actor": case["actor"], "expected": case["expect_status"],
                   "actual": None, "outcome": "error"}
         checks = case.get("assert_json")
         if checks:
             result["assertions"] = error_results(checks)
-        if time.monotonic() >= run_end:
+        if run_exhausted or time.monotonic() >= run_end:
             result["error"] = "not_run"
             results.append(result)
             continue
@@ -149,6 +150,7 @@ def run(matrix, *, request_timeout=deadlines.DEFAULT_REQUEST_TIMEOUT,
             # Status-only cases never read bodies. No raw content is persisted.
             # Never follow redirects, decompress bodies or print server diagnostics.
         except deadlines.DeadlineExceeded as exc:
+            run_exhausted = exc.code == "run_timeout"
             result.update(actual=None, outcome="error", error=exc.code)
             if checks:
                 result["assertions"] = error_results(checks)
