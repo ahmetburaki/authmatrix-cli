@@ -55,6 +55,6 @@ authmatrix validate examples/tenant-matrix.json
 git diff --check
 ```
 
-[PR #7](https://github.com/ahmetburaki/authmatrix-cli/pull/7) is stacked on PR #6.
-Review and integrate #4, #5, #6, then #7, retargeting/rechecking each dependent PR.
-Existing PRs are not merged by this change.
+[PR #7](https://github.com/ahmetburaki/authmatrix-cli/pull/7) merged into main on
+October 31 after PRs #4–#6. The [combined-main acceptance](INTEGRATION.md) covers
+the integrated tree; the original feature run references above remain unchanged.
