@@ -19,6 +19,7 @@ machine that is `python3.14`; replace `python3` below if your default is older.
 python3 -m venv .venv
 . .venv/bin/activate
 python -m pip install --no-deps .
+# The test suite also requires OpenSSL for disposable local TLS fixtures.
 python -m unittest discover -s tests -v
 authmatrix validate examples/matrix.json
 ```
@@ -88,10 +89,10 @@ fault modes demonstrate which cases fail, with positive controls for every denia
 - `--authorized` confirms that you own or have permission to test the target.
   Private IPs do not establish permission. Production is outside scope; do not
   label a production service as staging. Network restrictions cannot infer this.
-- GET/HEAD only, sequential requests, maximum 200 cases, five-second socket
-  timeout per operation, no redirects, retries, proxy discovery or TLS bypass.
-  Socket timeout is not a whole-run deadline; a slowly streaming header can extend
-  execution. GET endpoints must still be reviewed for side effects.
+- GET/HEAD only, sequential requests, maximum 200 cases. Defaults: ten-second
+  request and 120-second run deadlines, plus five-second socket inactivity timeout.
+  See [deadline behavior and overrides](docs/DEADLINES.md). No redirects, retries,
+  proxy discovery or TLS bypass. GET endpoints must still be reviewed for side effects.
 - Tokens go directly to the specified origin. Status-only cases never read bodies.
   Asserted GET cases read at most 64 KiB plus one sentinel byte and reject invalid
   or oversized JSON. Raw bodies and response headers are never persisted. No scanning or
@@ -101,7 +102,9 @@ fault modes demonstrate which cases fail, with positive controls for every denia
 
 Evidence records only schema version, UTC time, matrix SHA-256, generic actor/case
 IDs, expected and actual statuses, outcomes and generic error codes. JSON-asserted
-runs use evidence schema 2 and add only generic assertion IDs and outcomes. It omits
+runs add only generic assertion IDs and outcomes. New runs use evidence schema 3
+with execution limits and explicit timeout/not-run errors; the reader retains
+legacy schema 1/2 comparison support. It omits
 origins, paths, queries, token values, environment variable names, response bodies,
 headers and exception details. IDs are user-supplied and must not contain secrets.
 A digest is for matching configurations, not anonymization or evidence signing.

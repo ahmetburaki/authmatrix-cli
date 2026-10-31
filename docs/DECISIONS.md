@@ -34,3 +34,15 @@ status-only version-1 evidence; use schema 2 when assertions are configured. Sto
 only generic assertion IDs and outcomes, and require complete source-matrix
 coverage during offline comparison. Invalid response bodies are errors, never
 passing fixes. Wall-clock deadlines remain a separate operational change.
+
+## 005 — Absolute network execution deadlines
+
+Apply monotonic request/run budgets at TCP/TLS/send and each raw response read,
+including HTTP framing and detached close-delimited response sockets. Preserve
+standard verified TLS and HTTP parsing. Avoid signals and background cancellation
+threads to support ordinary Windows and non-main-thread Python callers.
+
+New evidence is schema 3 with explicit timeout/not-run errors and limit metadata.
+Accept old schema 1/2 reports for offline comparison with unchanged matrices.
+Keep prior completed observations; after run exhaustion send no more requests.
+See [deadline contract](DEADLINES.md) and [acceptance](DEADLINE_VALIDATION.md).

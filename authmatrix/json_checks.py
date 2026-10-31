@@ -3,6 +3,8 @@ import http.client
 import json
 import math
 
+from .deadlines import DeadlineExceeded
+
 
 MAX_BODY_BYTES = 64 * 1024
 MAX_JSON_DEPTH = 64
@@ -125,6 +127,8 @@ def check_response(response, checks):
             raise ValueError("Truncated JSON response")
         document = strict_json(body.decode("utf-8"))
         return evaluate(document, checks)
+    except DeadlineExceeded:
+        raise
     except (OSError, http.client.HTTPException, ValueError, RecursionError):
         # Includes malformed/truncated/oversized bodies. No exception text escapes.
         return error_results(checks)
