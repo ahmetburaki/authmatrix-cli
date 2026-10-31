@@ -7,6 +7,7 @@ from pathlib import Path
 from .core import ConfigError, compare, run, validate
 from .json_checks import strict_json
 from .deadlines import DEFAULT_REQUEST_TIMEOUT, DEFAULT_RUN_TIMEOUT
+from .contracts import get_schema, SCHEMA_FILES
 
 
 def load(path):
@@ -26,6 +27,8 @@ def save(path, report):
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="authmatrix")
     sub = parser.add_subparsers(dest="command", required=True)
+    contract = sub.add_parser("schema", help="Print a bundled JSON Schema without network access")
+    contract.add_argument("kind", choices=SCHEMA_FILES)
     lint = sub.add_parser("validate", help="Validate a matrix without network access")
     lint.add_argument("matrix")
     execute = sub.add_parser("run")
@@ -42,6 +45,9 @@ def main(argv=None):
     diff.add_argument("--matrix", required=True, help="Source matrix used by both runs")
     args = parser.parse_args(argv)
     try:
+        if args.command == "schema":
+            print(json.dumps(get_schema(args.kind), indent=2))
+            return 0
         if args.command == "validate":
             validate(load(args.matrix))
             print("Matrix valid (no requests sent)")

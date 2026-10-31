@@ -40,3 +40,11 @@ review and merge in order #4, #5, #6.
 
 The source-matrix coverage feature is already implemented locally. Do not create
 an open implementation issue for completed work. ROADMAP.md lists later tasks.
+
+## M2 — Machine-readable contracts
+
+Implemented on `feat/json-schema-contracts`: bundled matrix/evidence JSON Schemas,
+offline CLI exports and fixed legacy/current compatibility fixtures. This branch
+builds on PR #6. [PR #7](https://github.com/ahmetburaki/authmatrix-cli/pull/7) is
+ready for review after local and Ubuntu/Windows Python 3.11–3.14 acceptance.
+See [contracts](SCHEMAS.md) and [acceptance](SCHEMA_VALIDATION.md).

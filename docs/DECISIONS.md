@@ -46,3 +46,14 @@ New evidence is schema 3 with explicit timeout/not-run errors and limit metadata
 Accept old schema 1/2 reports for offline comparison with unchanged matrices.
 Keep prior completed observations; after run exhaustion send no more requests.
 See [deadline contract](DEADLINES.md) and [acceptance](DEADLINE_VALIDATION.md).
+
+## 006 — Bundled structural contracts with runtime semantic validation
+
+Ship self-contained JSON Schema 2020-12 matrix/evidence assets inside the Python
+package, with offline CLI exports and a pinned test-only validator. Preserve the
+dependency-free runtime and legacy evidence versions. Do not duplicate IP/origin
+validation or source-matrix comparison in JSON Schema: retain those authoritative
+runtime checks and test/document structural acceptance gaps explicitly.
+
+Fixed synthetic compatibility fixtures and installed-package export checks guard
+against schema drift and missing wheel assets. See [schemas](SCHEMAS.md).
