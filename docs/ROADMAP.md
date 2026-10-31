@@ -40,7 +40,9 @@ Python 3.11–3.14; see [validation](VALIDATION.md). No real staging API has bee
 4. **[Issue #3: Enforce wall-clock run and request deadlines](https://github.com/ahmetburaki/authmatrix-cli/issues/3)** (`feat: bound total execution time`)
    - Implemented on `fix/request-run-deadlines`: shared monotonic request/run budgets,
      deadline-aware TCP/TLS/header/body/framing reads and truthful partial evidence.
-   - Local acceptance passed; hosted validation and review are pending.
+   - All 53 tests passed locally and in Ubuntu/Windows CI on Python 3.11–3.14.
+     [PR #6](https://github.com/ahmetburaki/authmatrix-cli/pull/6) is ready for review;
+     see [acceptance](DEADLINE_VALIDATION.md).
    - Built on PR #5; see [deadline contract](DEADLINES.md).
 5. **Issue: Design hostname staging support** (`feat: pin validated staging addresses`)
    - Define explicit host allowlist, IP pinning, TLS identity and custom CA handling.

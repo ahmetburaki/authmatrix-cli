@@ -25,7 +25,7 @@ and recorded as an error, not a late pass.
    Legacy schema 1/2 reports compare with schema 3 using unchanged matrices.
 4. Installed CLI ran outside the source directory against an OS-selected loopback
    port with a 0.2-second run budget. Including Python startup, completion took
-   0.281 seconds, saved schema-3 evidence, exited 2 and recorded:
+   0.271 seconds, saved schema-3 evidence, exited 2 and recorded:
    `pass`, `run_timeout`, `not_run`. The last request was never sent.
 
 Previously completed results are retained, per-request timeout permits later cases
@@ -41,14 +41,47 @@ TLS key material rather than committing it.
 
 ## Hosted checks
 
-Pending the feature branch's Ubuntu/Windows jobs on Python 3.11–3.14. Each job
-installs the package, runs the full suite and validates all three matrices.
+[All eight PR jobs passed](https://github.com/ahmetburaki/authmatrix-cli/actions/runs/41235021810)
+on Ubuntu and Windows using Python 3.11, 3.12, 3.13 and 3.14 for runtime revision
+`64a3836953275b9492565e721171b154b4bfff3d`. The
+[push run](https://github.com/ahmetburaki/authmatrix-cli/actions/runs/41235018059)
+also passed. Each job installs the package, runs all 53 tests and validates all
+three matrices.
 
 The first Windows run exposed socket timers expiring just before the monotonic
 clock crossed the configured limit. The implementation now retains the allowance's
 limiting deadline, and a deterministic regression test covers early timer expiry
 and suppression of subsequent requests after a run timeout. Ordinary inactivity
 timeouts retain their existing transport-error classification.
+
+## Changed files and verification commands
+
+Runtime enforcement lives in `authmatrix/deadlines.py` and `core.py`; `cli.py`
+exposes the limits, and `json_checks.py` propagates deadline errors. Regression
+coverage is in `tests/test_deadlines.py`, with evidence-version expectations in
+`test_json_checks.py` and the POSIX-only permission check in `test_core.py`.
+The CI workflow adds Windows to the supported Python matrix. README, contributor
+instructions and the deadline/evidence/roadmap documents describe these contracts.
+
+The following gates passed (use an activated Python 3.11+ environment):
+
+```sh
+git diff --check
+python -m compileall -q authmatrix tests
+python -m unittest discover -s tests -p test_deadlines.py -q  # 16 tests
+python -m unittest discover -s tests -v                     # 53 tests
+python -m pip wheel --no-deps --no-cache-dir --wheel-dir /tmp/authmatrix-wheels .
+python -m pip install --no-deps --force-reinstall /tmp/authmatrix-wheels/authmatrix_cli-0.1.0-py3-none-any.whl
+authmatrix validate examples/matrix.json
+authmatrix validate examples/json-matrix.json
+authmatrix validate examples/tenant-matrix.json
+```
+
+The actual local wheel destination was the security tool's disposable artifact
+directory rather than the illustrative `/tmp/authmatrix-wheels` path. An initial
+`--no-build-isolation` attempt could not import the environment's missing
+setuptools; the standard isolated build above and installation both passed.
+Installed-CLI validation and the loopback smoke ran outside the source directory.
 
 ## Integration and remaining limits
 

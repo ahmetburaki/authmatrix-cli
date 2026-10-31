@@ -35,6 +35,8 @@ implementation from its corrected version.
 Implemented on `fix/request-run-deadlines`: explicit whole-request and run budgets,
 slow-header/body/framing/TLS regressions and truthful partial evidence. See
 [deadline contract](DEADLINES.md) and [acceptance](DEADLINE_VALIDATION.md).
+[PR #6](https://github.com/ahmetburaki/authmatrix-cli/pull/6) targets PR #5's branch;
+review and merge in order #4, #5, #6.
 
 The source-matrix coverage feature is already implemented locally. Do not create
 an open implementation issue for completed work. ROADMAP.md lists later tasks.
