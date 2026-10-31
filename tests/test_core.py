@@ -168,7 +168,8 @@ class CoreTests(unittest.TestCase):
             self.assertEqual(main(["run", str(matrix), "--output", str(before)]), 2)
             self.assertFalse(before.exists())
             self.assertEqual(main(["run", str(matrix), "--authorized", "--output", str(before)]), 1)
-            self.assertEqual(before.stat().st_mode & 0o777, 0o600)
+            if os.name == "posix":
+                self.assertEqual(before.stat().st_mode & 0o777, 0o600)
             self.server.vulnerable = False
             self.assertEqual(main(["run", str(matrix), "--authorized", "--output", str(after)]), 0)
             self.assertEqual(main(["compare", str(before), str(after), "--matrix", str(matrix)]), 0)

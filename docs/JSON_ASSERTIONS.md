@@ -1,7 +1,7 @@
 # JSON response assertions
 
-Opt in per GET case with `assert_json`. Status-only matrices remain version 1 and
-keep the original evidence schema and behavior; their response bodies are not read.
+Opt in per GET case with `assert_json`. Matrix files remain version 1. Status-only
+cases do not read response bodies; new evidence uses schema 3 with deadline metadata.
 Both status and every configured assertion must pass for an asserted case to pass.
 
 ```json
@@ -59,14 +59,14 @@ may also hit the interpreter's parser limit sooner. No body content or exception
 text is printed. Errors exit 2 and cannot count as a demonstrated fix. A valid
 JSON response with a wrong expected field or status exits 1.
 
-The existing five-second timeout is per socket operation. A slow peer can extend
-total time; explicit wall-clock deadlines remain issue #3. Field assertions only
+Request/run deadlines now bound network execution in addition to the five-second
+socket inactivity limit; see [deadline behavior](DEADLINES.md). Field assertions only
 cover the declared paths, not every possible leak. Large responses require a
 smaller fixture/endpoint or future supported limits; do not silently skip checks.
 
 ## Evidence compatibility
 
-Runs containing any assertions emit evidence schema 2. Each asserted case adds
+New runs emit evidence schema 3. Legacy JSON-asserted runs used schema 2. Each asserted case adds
 `assertions`, a list of `{id, outcome}` objects; field paths, expected values and
 observed values are omitted. Generic assertion IDs are persisted, so they must
 not contain secrets. Status-only cases in a mixed run have no `assertions` field.

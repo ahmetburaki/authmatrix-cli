@@ -32,9 +32,9 @@ implementation from its corrected version.
 
 ### [Issue #3: Enforce wall-clock request and run deadlines](https://github.com/ahmetburaki/authmatrix-cli/issues/3)
 
-The existing five-second socket timeout is per operation. Introduce explicit
-whole-request and whole-run budgets. Accept when slow-header and slow-body
-fixtures terminate within the documented budget with truthful error evidence.
+Implemented on `fix/request-run-deadlines`: explicit whole-request and run budgets,
+slow-header/body/framing/TLS regressions and truthful partial evidence. See
+[deadline contract](DEADLINES.md) and [acceptance](DEADLINE_VALIDATION.md).
 
 The source-matrix coverage feature is already implemented locally. Do not create
 an open implementation issue for completed work. ROADMAP.md lists later tasks.
