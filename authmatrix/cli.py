@@ -5,12 +5,13 @@ import os
 from pathlib import Path
 
 from .core import ConfigError, compare, run, validate
+from .json_checks import strict_json
 
 
 def load(path):
     if Path(path).stat().st_size > 1_000_000:
         raise ConfigError("Input exceeds 1 MB")
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+    return strict_json(Path(path).read_text(encoding="utf-8"))
 
 
 def save(path, report):

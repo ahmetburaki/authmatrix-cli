@@ -24,3 +24,13 @@ cross-matrix comparisons and internally contradictory outcomes. A proof-of-fix r
 an actual failing baseline, passing rerun and passing positive controls as declared
 by the operator. Evidence is not signed, and HTTP status alone cannot validate
 body-level authorization. Preserve those limits in every release claim.
+
+## 004 — Explicit JSON assertions with bounded evidence
+
+Allow opt-in presence, absence and type-strict scalar equality checks on GET
+responses. Use literal key/index paths rather than an expression language. Bound
+body reads to 64 KiB plus one sentinel and reject ambiguous/invalid JSON. Preserve
+status-only version-1 evidence; use schema 2 when assertions are configured. Store
+only generic assertion IDs and outcomes, and require complete source-matrix
+coverage during offline comparison. Invalid response bodies are errors, never
+passing fixes. Wall-clock deadlines remain a separate operational change.
