@@ -19,13 +19,15 @@ machine that is `python3.14`; replace `python3` below if your default is older.
 python3 -m venv .venv
 . .venv/bin/activate
 python -m pip install --no-deps .
-# The test suite also requires OpenSSL for disposable local TLS fixtures.
-python -m unittest discover -s tests -v
 authmatrix validate examples/matrix.json
 ```
 
 No runtime dependencies. Installation uses setuptools as the build dependency.
 Alternatively use `python3 -m authmatrix` without installing.
+
+For development, install `python -m pip install ".[test]"` and run
+`python -m unittest discover -s tests -v`. Tests also require OpenSSL for disposable
+local TLS fixtures. The JSON Schema validator is a test-only dependency.
 
 ### Reproduce a failure and validate a fix
 
@@ -76,6 +78,11 @@ For APIs returning 200 with unauthorized fields, add [JSON assertions](docs/JSON
 for field presence, absence or scalar equality; see [examples/json-matrix.json](examples/json-matrix.json).
 Do not accept 200 and 403 together for a denial case.
 
+Export the bundled [JSON Schemas](docs/SCHEMAS.md) for editor/integration checks:
+`authmatrix schema matrix` and `authmatrix schema evidence`. They work offline
+with an ordinary installation. Schema acceptance checks structure; the CLI still
+enforces target scope, unique IDs, references and source-matrix consistency.
+
 The [tenant/role example](docs/TENANT_ROLES.md) adds a loopback API with two
 tenants, two roles and 21 explicit cases. Independent ownership, tenant and role
 fault modes demonstrate which cases fail, with positive controls for every denial.
@@ -120,6 +127,7 @@ is unsigned local data; this is regression validation, not independent attestati
 
 | Command | 0 | 1 | 2 |
 | --- | --- | --- | --- |
+| schema | exported JSON Schema | — | package/input error |
 | validate | valid | — | invalid input |
 | run | all passed | expectation mismatch | transport/response/config/output error |
 | compare | demonstrated fix, all pass | no demonstrated complete fix | invalid/incompatible evidence |

@@ -9,8 +9,14 @@ description = "Local and staging API authorization regression evidence"
 requires-python = ">=3.11"
 dependencies = []
 
+[project.optional-dependencies]
+test = ["jsonschema==4.26.0"]
+
 [project.scripts]
 authmatrix = "authmatrix.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["authmatrix*"]
+
+[tool.setuptools.package-data]
+authmatrix = ["schemas/*.json"]

@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/ahmetburaki/authmatrix-cli/main/authmatrix/schemas/evidence.schema.json",
+  "title": "AuthMatrix evidence versions 1, 2 and 3",
+  "description": "Structural compatibility contract. Offline comparison still verifies source-matrix identity, coverage, unique IDs and outcome consistency. Schema validity does not authenticate evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "matrix_sha256", "created_at", "cases"],
+  "properties": {
+    "schema_version": {"type": "integer", "enum": [1, 2, 3]},
+    "matrix_sha256": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64,
+      "not": {"pattern": "[^0-9a-f]"}
+    },
+    "created_at": {
+      "type": "string",
+      "description": "The writer emits a UTC ISO 8601 timestamp; legacy readers accept strings without asserting a date-time format."
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 200,
+      "items": {"$ref": "#/$defs/case"}
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_seconds", "run_seconds"],
+      "properties": {
+        "request_seconds": {"$ref": "#/$defs/seconds"},
+        "run_seconds": {"$ref": "#/$defs/seconds"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"schema_version": {"const": 3}}},
+      "then": {"required": ["limits"]},
+      "else": {
+        "not": {"required": ["limits"]},
+        "properties": {
+          "cases": {
+            "items": {
+              "properties": {"error": {"enum": ["transport_error", "response_error"]}}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"schema_version": {"const": 1}}},
+      "then": {
+        "properties": {"cases": {"items": {"properties": {"assertions": false}}}}
+      }
+    }
+  ],
+  "$defs": {
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "not": {"pattern": "[^A-Za-z0-9_-]"}
+    },
+    "status": {"type": "integer", "minimum": 100, "maximum": 599},
+    "seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 3600},
+    "assertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "outcome"],
+      "properties": {
+        "id": {"$ref": "#/$defs/label"},
+        "outcome": {"enum": ["pass", "fail", "error"]}
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "actor", "expected", "actual", "outcome"],
+      "properties": {
+        "id": {"$ref": "#/$defs/label"},
+        "actor": {"$ref": "#/$defs/label"},
+        "expected": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/status"}
+        },
+        "actual": {"oneOf": [{"$ref": "#/$defs/status"}, {"type": "null"}]},
+        "outcome": {"enum": ["pass", "fail", "error"]},
+        "error": {
+          "enum": ["transport_error", "response_error", "request_timeout", "run_timeout", "not_run"]
+        },
+        "assertions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {"$ref": "#/$defs/assertion"}
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"outcome": {"const": "error"}}},
+          "then": {
+            "required": ["error"],
+            "properties": {
+              "assertions": {"items": {"properties": {"outcome": {"const": "error"}}}}
+            },
+            "oneOf": [
+              {
+                "properties": {
+                  "error": {"enum": ["transport_error", "request_timeout", "run_timeout", "not_run"]},
+                  "actual": {"type": "null"}
+                }
+              },
+              {
+                "required": ["assertions"],
+                "properties": {
+                  "error": {"const": "response_error"},
+                  "actual": {"$ref": "#/$defs/status"}
+                }
+              }
+            ]
+          },
+          "else": {
+            "not": {"required": ["error"]},
+            "properties": {
+              "actual": {"$ref": "#/$defs/status"},
+              "assertions": {"items": {"properties": {"outcome": {"enum": ["pass", "fail"]}}}}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"outcome": {"const": "pass"}}},
+          "then": {
+            "properties": {
+              "assertions": {"items": {"properties": {"outcome": {"const": "pass"}}}}
+            }
+          }
+        }
+      ]
+    }
+  }
+}

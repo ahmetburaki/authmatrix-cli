@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "environment": "local",
+  "base_url": "http://127.0.0.1:8080",
+  "actors": {
+    "anonymous": {
+      "token_env": null
+    }
+  },
+  "cases": [
+    {
+      "id": "read-resource",
+      "actor": "anonymous",
+      "method": "GET",
+      "path": "/resource",
+      "expect_status": [
+        200
+      ],
+      "assert_json": [
+        {
+          "id": "allowed-field",
+          "path": [
+            "ok"
+          ],
+          "op": "present"
+        }
+      ]
+    }
+  ]
+}

@@ -47,8 +47,12 @@ Python 3.11–3.14; see [validation](VALIDATION.md). No real staging API has bee
 5. **Issue: Design hostname staging support** (`feat: pin validated staging addresses`)
    - Define explicit host allowlist, IP pinning, TLS identity and custom CA handling.
    - Accept when rebinding, redirect, proxy and metadata tests remain denied.
-6. **Issue: Publish machine-readable contracts** (`docs: specify matrix and evidence schemas`)
-   - Add JSON Schemas and compatibility fixtures; no runtime dependency required.
+6. **Implemented: Publish machine-readable contracts** (`feat: export bundled JSON schemas`)
+   - Implemented on `feat/json-schema-contracts`: self-contained matrix/evidence
+     JSON Schemas, offline exports and fixed legacy/current compatibility fixtures.
+   - All 63 tests passed locally; base-package exports work without the optional
+     test validator. Hosted validation and review are pending.
+   - Built on PR #6; see [contracts](SCHEMAS.md) and [acceptance](SCHEMA_VALIDATION.md).
 7. **Issue: Prepare first tagged release** (`chore: prepare release artifacts`)
    - Select license, verify packaging and installed CLI on clean supported Python
      versions; review evidence and document changelog. Publish only after CI passes.

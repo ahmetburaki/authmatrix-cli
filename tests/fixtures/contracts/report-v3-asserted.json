@@ -1,0 +1,26 @@
+{
+  "schema_version": 3,
+  "matrix_sha256": "5cfc331153dcacb350a0f1aa09dd576dea14d12e1d25bec757007ac055445059",
+  "created_at": "2026-10-31T00:00:00+00:00",
+  "cases": [
+    {
+      "id": "read-resource",
+      "actor": "anonymous",
+      "expected": [
+        200
+      ],
+      "actual": 200,
+      "outcome": "pass",
+      "assertions": [
+        {
+          "id": "allowed-field",
+          "outcome": "pass"
+        }
+      ]
+    }
+  ],
+  "limits": {
+    "request_seconds": 10.0,
+    "run_seconds": 120.0
+  }
+}
