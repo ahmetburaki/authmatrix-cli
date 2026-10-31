@@ -5,10 +5,12 @@ import ipaddress
 import json
 import os
 import re
+import time
 from datetime import datetime, timezone
 from urllib.parse import urlsplit
 
 from .json_checks import check_response, error_results, valid_checks
+from . import deadlines
 
 
 class ConfigError(ValueError):
@@ -99,7 +101,11 @@ def fingerprint(matrix):
     return hashlib.sha256(json.dumps(matrix, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
-def run(matrix):
+def run(matrix, *, request_timeout=deadlines.DEFAULT_REQUEST_TIMEOUT,
+        run_timeout=deadlines.DEFAULT_RUN_TIMEOUT):
+    request_timeout = deadlines.timeout_seconds(request_timeout)
+    run_timeout = deadlines.timeout_seconds(run_timeout)
+    run_end = time.monotonic() + run_timeout
     url = validate(matrix)
     # Resolve every credential before issuing any request; never include values in evidence.
     tokens = {}
@@ -111,14 +117,20 @@ def run(matrix):
         tokens[name] = token
     results = []
     for case in matrix["cases"]:
-        cls = http.client.HTTPSConnection if url.scheme == "https" else http.client.HTTPConnection
-        conn = cls(url.hostname, url.port, timeout=5)
         result = {"id": case["id"], "actor": case["actor"], "expected": case["expect_status"],
                   "actual": None, "outcome": "error"}
         checks = case.get("assert_json")
         if checks:
             result["assertions"] = error_results(checks)
+        if time.monotonic() >= run_end:
+            result["error"] = "not_run"
+            results.append(result)
+            continue
+        budget = deadlines.Budget(time.monotonic() + request_timeout, run_end)
+        conn = response = None
         try:
+            cls = deadlines.HTTPSConnection if url.scheme == "https" else deadlines.HTTPConnection
+            conn = cls(url.hostname, url.port, budget=budget)
             token = tokens[case["actor"]]
             headers = {"Authorization": "Bearer " + token} if token else {}
             conn.request(case["method"], case["path"], headers=headers)
@@ -133,23 +145,39 @@ def run(matrix):
                     result["error"] = "response_error"
                 elif "fail" in outcomes:
                     result["outcome"] = "fail"
+            budget.remaining()
             # Status-only cases never read bodies. No raw content is persisted.
             # Never follow redirects, decompress bodies or print server diagnostics.
+        except deadlines.DeadlineExceeded as exc:
+            result.update(actual=None, outcome="error", error=exc.code)
+            if checks:
+                result["assertions"] = error_results(checks)
         except (OSError, http.client.HTTPException, ValueError):
+            result.update(actual=None, outcome="error")
             result["error"] = "transport_error"
         finally:
-            conn.close()
+            if response is not None:
+                response.close()
+            if conn is not None:
+                conn.close()
         results.append(result)
-    version = 2 if any("assert_json" in c for c in matrix["cases"]) else 1
-    return {"schema_version": version, "matrix_sha256": fingerprint(matrix),
+    return {"schema_version": 3, "matrix_sha256": fingerprint(matrix),
+            "limits": {"request_seconds": request_timeout, "run_seconds": run_timeout},
             "created_at": datetime.now(timezone.utc).isoformat(), "cases": results}
 
 
 def check_report(report):
-    exact(report, ("schema_version", "matrix_sha256", "created_at", "cases"))
+    if not isinstance(report, dict):
+        raise ConfigError("Invalid evidence report")
+    fields = ("schema_version", "matrix_sha256", "created_at", "cases")
+    exact(report, fields + (("limits",) if report.get("schema_version") == 3 else ()))
     version = report["schema_version"]
-    if type(version) is not int or version not in (1, 2):
+    if type(version) is not int or version not in (1, 2, 3):
         raise ConfigError("Unsupported evidence schema")
+    if version == 3:
+        exact(report["limits"], ("request_seconds", "run_seconds"))
+        for value in report["limits"].values():
+            deadlines.timeout_seconds(value)
     if not isinstance(report["matrix_sha256"], str) or not re.fullmatch(r"[0-9a-f]{64}", report["matrix_sha256"]):
         raise ConfigError("Invalid matrix digest")
     if not isinstance(report["created_at"], str):
@@ -163,8 +191,8 @@ def check_report(report):
             raise ConfigError("Invalid evidence case")
         has_assertions = "assertions" in case
         if has_assertions:
-            if version != 2:
-                raise ConfigError("JSON assertions require evidence schema 2")
+            if version not in (2, 3):
+                raise ConfigError("JSON assertions require evidence schema 2 or 3")
             fields += ("assertions",)
         exact(case, fields + (("error",) if case.get("outcome") == "error" else ()))
         label(case["id"])
@@ -194,7 +222,9 @@ def check_report(report):
             transport = actual is None and case["error"] == "transport_error"
             response = (has_assertions and type(actual) is int and 100 <= actual <= 599
                         and case["error"] == "response_error")
-            if not (transport or response) or (has_assertions and any(s != "error" for s in states)):
+            deadline = (version == 3 and actual is None and
+                        case["error"] in ("request_timeout", "run_timeout", "not_run"))
+            if not (transport or response or deadline) or (has_assertions and any(s != "error" for s in states)):
                 raise ConfigError("Inconsistent error evidence")
         elif (type(actual) is not int or not 100 <= actual <= 599 or
               "error" in states or case["outcome"] !=
@@ -212,7 +242,7 @@ def compare(before, after, matrix):
     definitions = {c["id"]: c for c in matrix["cases"]}
     version = 2 if any("assert_json" in c for c in matrix["cases"]) else 1
     for report in (before, after):
-        if report["matrix_sha256"] != digest or report["schema_version"] != version:
+        if report["matrix_sha256"] != digest or report["schema_version"] not in (version, 3):
             raise ConfigError("Evidence does not match the source matrix")
         observed = {c["id"]: c for c in report["cases"]}
         if observed.keys() != definitions.keys() or any(

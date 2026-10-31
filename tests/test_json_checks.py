@@ -107,7 +107,7 @@ class JSONChecksTests(unittest.TestCase):
         before = run(self.matrix)
         self.server.vulnerable = False
         after = run(self.matrix)
-        self.assertEqual(before["schema_version"], 2)
+        self.assertEqual(before["schema_version"], 3)
         self.assertEqual([c["actual"] for c in before["cases"]], [200, 200])
         self.assertEqual([c["actual"] for c in after["cases"]], [200, 200])
         self.assertEqual(before["cases"][1]["outcome"], "fail")
@@ -170,7 +170,7 @@ class JSONChecksTests(unittest.TestCase):
         del self.matrix["cases"][0]["assert_json"]
         with patch("authmatrix.json_checks.http.client.HTTPResponse.read", side_effect=AssertionError("Unexpected body read")):
             report = run(self.matrix)
-        self.assertEqual(report["schema_version"], 1)
+        self.assertEqual(report["schema_version"], 3)
         self.assertNotIn("assertions", report["cases"][0])
 
     def test_assertion_schema_rejected_before_requests(self):
