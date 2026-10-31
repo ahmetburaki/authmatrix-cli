@@ -5,6 +5,10 @@ owned local and private staging APIs. AuthMatrix CLI is a standalone project
 with its own package, command-line interface and release roadmap. The name is
 provisional.
 
+The JSON assertion, tenant/role, deadline and schema features are integrated into
+`main`; see [integration acceptance](docs/INTEGRATION.md). Current CI covers all
+eight Ubuntu/Windows Python 3.11–3.14 combinations; see [CI checks](docs/CI.md).
+
 Define actor/resource expectations, detect a mismatch, apply your API fix, rerun
 and compare evidence. The MVP supports GET/HEAD, exact expected status codes
 and opt-in JSON field assertions on GET responses.
