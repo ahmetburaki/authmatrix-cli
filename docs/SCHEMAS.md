@@ -11,8 +11,8 @@ authmatrix schema evidence > evidence.schema.json
 
 Both commands print only JSON, exit 0 and require no credentials, target or
 network access. They use the standard library; the optional test dependency is
-not needed. Schema IDs identify their repository locations; use the bundled or
-exported files locally. The main-branch URLs become available after integration.
+not needed. Schema IDs identify their repository locations on main; use the
+bundled or exported files locally to keep validation independent of remote retrieval.
 
 | Contract | Bundled file | Supported documents |
 | --- | --- | --- |

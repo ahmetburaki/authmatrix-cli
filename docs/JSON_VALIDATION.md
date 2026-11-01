@@ -1,5 +1,8 @@
 # JSON assertion acceptance — 2026-10-27
 
+Historical feature acceptance; original counts and run links are retained below.
+The feature is now integrated into main; see [combined acceptance](INTEGRATION.md).
+
 ## Local results
 
 - 30 unittest tests passed on Python 3.14.7, including all 16 original tests.
@@ -27,11 +30,12 @@ contract consistent across supported versions.
 passed all four Python 3.11–3.14 jobs for implementation/documentation commit
 `6554aa72a7d4cac36a58cb100bc071e7ffe2b6a0`. Each job installed the package, ran
 all 30 tests and validated both example matrices with the installed CLI.
-The feature is proposed in [PR #4](https://github.com/ahmetburaki/authmatrix-cli/pull/4).
+The feature merged via [PR #4](https://github.com/ahmetburaki/authmatrix-cli/pull/4) on October 31.
 
 ## Limits
 
 Only synthetic local endpoints were contacted. Assertions cover explicit fields,
-not every possible leak. The body cap does not impose a whole-request deadline;
-issue #3 tracks wall-clock budgets. Evidence remains unsigned. This feature does
+not every possible leak. At this feature revision the body cap did not impose a
+whole-request deadline; main now includes [request/run budgets](DEADLINES.md)
+from PR #6. Evidence remains unsigned. This feature does
 not publish a release tag or select a distribution license.

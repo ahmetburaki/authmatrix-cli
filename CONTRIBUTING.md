@@ -9,6 +9,8 @@ to generate disposable loopback certificates; the CLI itself has no OpenSSL comm
 The schema suite validates bundled contracts, compatibility fixtures and schema
 exports from the installed package outside the checkout. Reinstall the package
 after changing schema assets so that this packaging check uses the current files.
+Open focused PRs against `main`; [CI.md](docs/CI.md) describes the supported matrix,
+base-install checks and action-update procedure.
 
 Use only synthetic local fixtures in tests and CI. Never include real credentials,
 private API paths, response contents or evidence from real systems. Do not contact

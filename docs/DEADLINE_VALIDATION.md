@@ -1,5 +1,8 @@
 # Deadline fix acceptance — 2026-10-31
 
+Historical feature acceptance; original counts and run links are retained below.
+The fix is now integrated into main; see [combined acceptance](INTEGRATION.md).
+
 ## Boundary and reproduction
 
 The October 27 security review identified a low-severity availability problem:
@@ -63,7 +66,8 @@ coverage is in `tests/test_deadlines.py`, with evidence-version expectations in
 The CI workflow adds Windows to the supported Python matrix. README, contributor
 instructions and the deadline/evidence/roadmap documents describe these contracts.
 
-The following gates passed (use an activated Python 3.11+ environment):
+The following gates passed for the 53-test feature revision. For current main,
+install the test extra and follow [CI.md](CI.md); it includes the later schema tests.
 
 ```sh
 git diff --check
@@ -85,9 +89,10 @@ Installed-CLI validation and the loopback smoke ran outside the source directory
 
 ## Integration and remaining limits
 
-This fix is stacked on PR #5, which is stacked on PR #4. Its review diff is scoped
-to deadlines, error/evidence compatibility, regression tests and documentation.
-No merge or release is implied.
+PR #6 was originally stacked on PR #5 and PR #4. After those predecessors merged,
+it was retargeted and merged into main on October 31. The fix's original review
+scope was deadlines, error/evidence compatibility, regression tests and documentation.
+No release was published.
 
 Timeouts bound network execution through absolute monotonic allowances. Local
 input loading/output writing, validation/evaluation and OS scheduling are not

@@ -1,5 +1,8 @@
 # Tenant/role acceptance — 2026-10-27
 
+Historical feature acceptance; original counts and run links are retained below.
+The feature is now integrated into main; see [combined acceptance](INTEGRATION.md).
+
 ## Local verification
 
 - 37 unittest tests passed on Python 3.14.7, including all 30 existing tests.
@@ -32,14 +35,13 @@ tokens, endpoint paths and raw response fields are not retained.
 passed all four Python 3.11–3.14 jobs for implementation/documentation commit
 `5c9872891d71a4365d877592373350613da90308`. Each job installed the package, ran
 all 37 tests and validated all three example matrices.
-The change is proposed in [PR #5](https://github.com/ahmetburaki/authmatrix-cli/pull/5).
+The change merged via [PR #5](https://github.com/ahmetburaki/authmatrix-cli/pull/5) on October 31.
 
 ## Integration and limits
 
-This change builds on the JSON assertion branch proposed in PR #4, which remains
-open. Its own PR targets that branch so reviewers see only tenant/role changes.
-It requires PR #4 to reach main first, followed by retargeting and verification.
-No merge or release is implied by these acceptance results.
+PR #5 was originally stacked on the JSON assertion branch. PR #4 merged first,
+then PR #5 was retargeted and merged into main. These historical feature checks
+are complemented by the combined-main checks above. No release was published.
 
 Only synthetic loopback endpoints were tested. The fixture models a declared
 policy; it does not infer or exhaustively assess a real application's policy.

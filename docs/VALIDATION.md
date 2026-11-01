@@ -2,6 +2,9 @@
 
 Historical status-only acceptance. For the October 27 JSON assertion feature,
 see [JSON acceptance](JSON_VALIDATION.md).
+For the current combined main state, see [integration acceptance](INTEGRATION.md)
+and the [current CI contract](CI.md). Counts and limitations below describe the
+original October 25 milestone.
 
 ## Verified
 
