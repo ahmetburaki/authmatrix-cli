@@ -57,3 +57,16 @@ runtime checks and test/document structural acceptance gaps explicitly.
 
 Fixed synthetic compatibility fixtures and installed-package export checks guard
 against schema drift and missing wheel assets. See [schemas](SCHEMAS.md).
+
+## 007 — Explicit staging hostname pins with verified identity
+
+Add matrix version 2 for a canonical staging HTTPS hostname plus a required
+loopback/private numeric pin. Bypass DNS entirely for that transport while keeping
+the hostname in standard TLS SNI/identity checks and HTTP Host. Preserve version-1
+IP origins, generic evidence and existing deadlines. An optional CA file supplies
+trust roots through a verified default context; no insecure mode is added.
+
+Snapshot the matrix before validation so target, cases and report digest refer to
+one configuration. The pin is included in the digest and changing it prevents
+comparison. CA-file paths remain execution input and are not retained in evidence.
+See [hostname contract](HOSTNAMES.md) and [acceptance](HOSTNAME_VALIDATION.md).

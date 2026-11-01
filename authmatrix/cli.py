@@ -35,6 +35,7 @@ def main(argv=None):
     execute.add_argument("matrix")
     execute.add_argument("--authorized", action="store_true", help="Confirm permission for this target")
     execute.add_argument("--output", required=True)
+    execute.add_argument("--ca-file", help="PEM CA bundle for verified HTTPS (default: system trust)")
     execute.add_argument("--request-timeout", type=float, default=DEFAULT_REQUEST_TIMEOUT,
                          help="Wall-clock seconds per request (default: 10; maximum: 3600)")
     execute.add_argument("--run-timeout", type=float, default=DEFAULT_RUN_TIMEOUT,
@@ -58,7 +59,7 @@ def main(argv=None):
             if Path(args.output).exists():
                 raise ConfigError("Output already exists; choose a new evidence path")
             report = run(load(args.matrix), request_timeout=args.request_timeout,
-                         run_timeout=args.run_timeout)
+                         run_timeout=args.run_timeout, ca_file=args.ca_file)
             save(args.output, report)
             counts = {state: sum(c["outcome"] == state for c in report["cases"])
                       for state in ("pass", "fail", "error")}

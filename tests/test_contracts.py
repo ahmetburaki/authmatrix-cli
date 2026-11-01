@@ -95,7 +95,7 @@ class ContractTests(unittest.TestCase):
 
     def test_examples_and_fixture_matrices_match_both_validators(self):
         paths = list((ROOT / "examples").glob("*matrix.json")) + list(FIXTURES.glob("matrix-*.json"))
-        self.assertEqual(len(paths), 5)
+        self.assertEqual(len(paths), 6)
         for path in paths:
             with self.subTest(name=path.name):
                 matrix = strict_json(path.read_text(encoding="utf-8"))

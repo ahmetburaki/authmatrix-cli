@@ -70,7 +70,7 @@ never count as fixes. An unchanged passing run is not a demonstrated fix.
 
 ## Matrix contract
 
-See [examples/matrix.json](examples/matrix.json). Schema version 1 is strict:
+See [examples/matrix.json](examples/matrix.json). Matrix version 1 is strict:
 unknown keys and duplicate case IDs are rejected. Each case identifies its actor,
 method, path and nonempty list of accepted HTTP statuses. Tokens are loaded only
 from named environment variables; `null` means anonymous. All credentials are
@@ -81,6 +81,11 @@ positive controls so denial of every request cannot make the whole suite pass.
 For APIs returning 200 with unauthorized fields, add [JSON assertions](docs/JSON_ASSERTIONS.md)
 for field presence, absence or scalar equality; see [examples/json-matrix.json](examples/json-matrix.json).
 Do not accept 200 and 403 together for a denial case.
+
+For a staging service identified by its TLS hostname, use [matrix version 2](docs/HOSTNAMES.md)
+with an explicit private/loopback IP pin. The hostname is never resolved; certificate
+identity and HTTP Host remain the configured name. `--ca-file` selects a PEM trust
+bundle for verified HTTPS when the service uses a private CA.
 
 Export the bundled [JSON Schemas](docs/SCHEMAS.md) for editor/integration checks:
 `authmatrix schema matrix` and `authmatrix schema evidence`. They work offline
@@ -93,10 +98,12 @@ fault modes demonstrate which cases fail, with positive controls for every denia
 
 ## Target and execution boundary
 
-- Only explicit IP origins: loopback for `local`; loopback or RFC1918/IPv6 ULA
-  for `staging`. Hostnames, public IPs, link-local/metadata and unspecified IPs
-  are rejected. Staging requires HTTPS with normal certificate validation.
-  Certificates must cover the IP address; custom hostnames/CA options are deferred.
+- Version 1 uses explicit IP origins: loopback for `local`; loopback or
+  RFC1918/IPv6 ULA for `staging`. Version 2 supports a canonical HTTPS staging
+  hostname with an explicit pin in the same allowed IP scope, without DNS lookup.
+  Public IPs, link-local/metadata and unspecified IPs remain outside scope.
+  Staging requires verified HTTPS. Certificates cover the IP in version 1 or
+  the hostname in version 2; a PEM CA file can be supplied without disabling checks.
 - `--authorized` confirms that you own or have permission to test the target.
   Private IPs do not establish permission. Production is outside scope; do not
   label a production service as staging. Network restrictions cannot infer this.
