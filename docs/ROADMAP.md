@@ -48,11 +48,11 @@ Python 3.11–3.14; see [validation](VALIDATION.md). No real staging API has bee
      origins with explicit private/loopback pins, preserved SNI/Host and optional CA files.
    - DNS is never consulted. Validation, TLS identity, proxy/redirect, deadline,
      evidence privacy, comparison and legacy compatibility tests cover the boundary.
-   - All 79 tests passed locally; the initial hosted matrix passed, including
-     real IPv6 TLS in every job. Fresh CI/security checks are pending after cleaning
-     a fabricated proxy-credential fixture from the unmerged PR history.
-     [PR #9](https://github.com/ahmetburaki/authmatrix-cli/pull/9) targets main;
-     see [contract](HOSTNAMES.md) and [acceptance](HOSTNAME_VALIDATION.md).
+   - All 79 tests passed locally and on Ubuntu/Windows Python 3.11–3.14;
+     cleaned-history CI and GitGuardian checks passed. Real IPv6 TLS was verified
+     in every hosted platform/version. [PR #9](https://github.com/ahmetburaki/authmatrix-cli/pull/9)
+     targets main and is ready for review; see [contract](HOSTNAMES.md) and
+     [acceptance](HOSTNAME_VALIDATION.md).
 6. **Implemented: Publish machine-readable contracts** (`feat: export bundled JSON schemas`)
    - Merged into `main`: self-contained matrix/evidence
      JSON Schemas, offline exports and fixed legacy/current compatibility fixtures.

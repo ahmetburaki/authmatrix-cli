@@ -47,8 +47,11 @@ in a fabricated proxy URL used only by the no-proxy test. It had no associated
 account or service. The fixture now uses a credential-free documentation address,
 preserving the proxy-isolation check without hardcoded credential syntax.
 The unmerged PR history was replaced after creating a local backup; secret checks
-remain enabled. Fresh hosted/security results are pending for the cleaned history.
-[PR #9](https://github.com/ahmetburaki/authmatrix-cli/pull/9) targets main directly.
+remain enabled. [All eight cleaned-history CI jobs passed](https://github.com/ahmetburaki/authmatrix-cli/actions/runs/41341122914)
+for implementation revision `1d6167aa864c323be2fb384ccdb844a18ac77e0b`, running
+all 79 tests and four matrix validations on Ubuntu/Windows Python 3.11–3.14.
+GitGuardian also passed. [PR #9](https://github.com/ahmetburaki/authmatrix-cli/pull/9)
+targets main directly and is ready for review.
 
 ## Commands
 
