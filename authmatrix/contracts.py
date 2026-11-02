@@ -3,7 +3,7 @@ import json
 from importlib.resources import files
 
 
-SCHEMA_FILES = {"matrix": "matrix-v1.schema.json", "evidence": "evidence.schema.json"}
+SCHEMA_FILES = {"matrix": "matrix.schema.json", "evidence": "evidence.schema.json"}
 
 
 def get_schema(name):

@@ -15,8 +15,8 @@ outer limit and performs these checks:
 1. Install the base package without runtime dependencies.
 2. Export both schemas with optional validator imports blocked, using isolated
    Python imports so the installed package supplies the assets.
-3. Install the test extra and run all 63 integration/contract tests.
-4. Validate the status, JSON-assertion and tenant/role example matrices.
+3. Install the test extra and run the full integration/contract suite.
+4. Validate the status, JSON-assertion, tenant/role and pinned-hostname matrices.
 
 Tests use synthetic loopback HTTP/TLS fixtures. OpenSSL generates disposable TLS
 keys. No staging or production credentials are provided. The workflow grants only
@@ -52,6 +52,7 @@ python -m unittest discover -s tests -v
 authmatrix validate examples/matrix.json
 authmatrix validate examples/json-matrix.json
 authmatrix validate examples/tenant-matrix.json
+authmatrix validate examples/hostname-matrix.json
 git diff --check
 ```
 

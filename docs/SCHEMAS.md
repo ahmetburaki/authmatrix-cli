@@ -1,11 +1,12 @@
 # Matrix and evidence schemas
 
-AuthMatrix bundles two self-contained [JSON Schema 2020-12](https://json-schema.org/draft/2020-12/schema)
-contracts. All references are local fragments, so validation needs no remote
+AuthMatrix exports two self-contained [JSON Schema 2020-12](https://json-schema.org/draft/2020-12/schema)
+contracts, with the original version-1 matrix schema also retained in the package.
+All references are local fragments, so validation needs no remote
 schema retrieval. The installed CLI exports the same files shipped in the wheel:
 
 ```sh
-authmatrix schema matrix > matrix-v1.schema.json
+authmatrix schema matrix > matrix.schema.json
 authmatrix schema evidence > evidence.schema.json
 ```
 
@@ -16,8 +17,12 @@ bundled or exported files locally to keep validation independent of remote retri
 
 | Contract | Bundled file | Supported documents |
 | --- | --- | --- |
-| Matrix | `authmatrix/schemas/matrix-v1.schema.json` | Matrix version 1, with optional GET JSON assertions |
+| Matrix | `authmatrix/schemas/matrix.schema.json` | Matrix versions 1 and 2, with optional GET JSON assertions |
 | Evidence | `authmatrix/schemas/evidence.schema.json` | Evidence versions 1, 2 and 3 |
+
+`matrix-v1.schema.json` remains a version-1-only structural contract for existing
+integrations. The current matrix export adds staging hostname pins in version 2;
+the old file and version-1 input behavior are unchanged.
 
 The contracts describe required and unknown fields, allowed types/operations,
 label/path/array limits, assertion shapes, error representations and version
@@ -27,8 +32,8 @@ may contain an error code. Timeout/transport cases require a null actual status;
 response errors require assertion results and an observed status. An error case
 cannot contain passing assertions.
 
-The writer continues to emit evidence schema 3. No matrix/evidence version bump
-or network behavior change is introduced by publishing these contracts. Legacy
+The writer continues to emit evidence schema 3. Matrix version 2 adds
+[pinned staging hostnames](HOSTNAMES.md); version-1 matrices remain valid. Legacy
 schema-1/2 evidence still compares with schema 3 for unchanged source matrices.
 The synthetic [compatibility corpus](../tests/fixtures/contracts/README.md)
 exercises that behavior without storing observations from real systems.
@@ -44,7 +49,7 @@ example, a VS Code workspace opened at this repository can use this
   "json.schemas": [
     {
       "fileMatch": ["/examples/*matrix.json"],
-      "url": "./authmatrix/schemas/matrix-v1.schema.json"
+      "url": "./authmatrix/schemas/matrix.schema.json"
     }
   ]
 }
@@ -63,7 +68,7 @@ CLI and are deliberately tested as accepted-by-schema/rejected-by-runtime cases:
 
 | Rule | Authoritative check |
 | --- | --- |
-| Literal IP, allowed scope, port/origin syntax and staging HTTPS | `authmatrix validate matrix.json` |
+| Literal IP/pin scope, canonical hostname, port/origin syntax and staging HTTPS | `authmatrix validate matrix.json` |
 | Unique case/assertion IDs and actors referenced by cases | Matrix/runtime report validation |
 | Strict JSON parsing, duplicate keys, finite numbers, input size and depth | CLI input loading |
 | Integer representation: `1.0` is a JSON Schema integer but the runtime requires an integer token for version/status/index fields | Runtime validation |

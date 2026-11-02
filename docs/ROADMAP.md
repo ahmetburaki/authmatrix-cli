@@ -43,9 +43,16 @@ Python 3.11–3.14; see [validation](VALIDATION.md). No real staging API has bee
      [PR #6](https://github.com/ahmetburaki/authmatrix-cli/pull/6) merged on October 31;
      see [acceptance](DEADLINE_VALIDATION.md).
    - See [deadline contract](DEADLINES.md).
-5. **Issue: Design hostname staging support** (`feat: pin validated staging addresses`)
-   - Define explicit host allowlist, IP pinning, TLS identity and custom CA handling.
-   - Accept when rebinding, redirect, proxy and metadata tests remain denied.
+5. **Implemented: Pinned hostname staging support** (`feat: pin validated staging addresses`)
+   - Implemented on `feat/pinned-staging-hostnames`: version-2 HTTPS hostname
+     origins with explicit private/loopback pins, preserved SNI/Host and optional CA files.
+   - DNS is never consulted. Validation, TLS identity, proxy/redirect, deadline,
+     evidence privacy, comparison and legacy compatibility tests cover the boundary.
+   - All 79 tests passed locally and on Ubuntu/Windows Python 3.11–3.14;
+     cleaned-history CI and GitGuardian checks passed. Real IPv6 TLS was verified
+     in every hosted platform/version. [PR #9](https://github.com/ahmetburaki/authmatrix-cli/pull/9)
+     targets main and is ready for review; see [contract](HOSTNAMES.md) and
+     [acceptance](HOSTNAME_VALIDATION.md).
 6. **Implemented: Publish machine-readable contracts** (`feat: export bundled JSON schemas`)
    - Merged into `main`: self-contained matrix/evidence
      JSON Schemas, offline exports and fixed legacy/current compatibility fixtures.

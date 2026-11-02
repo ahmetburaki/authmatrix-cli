@@ -33,3 +33,4 @@ jobs:
       - run: authmatrix validate examples/matrix.json
       - run: authmatrix validate examples/json-matrix.json
       - run: authmatrix validate examples/tenant-matrix.json
+      - run: authmatrix validate examples/hostname-matrix.json

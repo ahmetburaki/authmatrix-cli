@@ -95,14 +95,29 @@ class _DeadlineResponse(http.client.HTTPResponse):
 
 
 class _DeadlineConnection:
-    def __init__(self, host, port, *, budget):
+    def __init__(self, host, port, *, budget, connect_ip=None, **kwargs):
         self.budget = budget
-        super().__init__(host, port, timeout=budget.socket_timeout())
+        self.connect_ip = connect_ip
+        super().__init__(host, port, timeout=budget.socket_timeout(), **kwargs)
         self._create_connection = self._connect_socket
         self.response_class = functools.partial(_DeadlineResponse, budget=budget)
 
     def _connect_socket(self, address, timeout, source_address):
-        sock = socket.create_connection(address, self.budget.socket_timeout(), source_address)
+        if self.connect_ip is None:
+            sock = socket.create_connection(address, self.budget.socket_timeout(), source_address)
+        else:
+            # A validated numeric pin bypasses getaddrinfo entirely. Keep self.host
+            # unchanged so HTTPSConnection verifies SNI/certificate identity.
+            family = socket.AF_INET6 if ":" in self.connect_ip else socket.AF_INET
+            sock = socket.socket(family, socket.SOCK_STREAM)
+            try:
+                sock.settimeout(self.budget.socket_timeout())
+                if source_address is not None:
+                    sock.bind(source_address)
+                sock.connect((self.connect_ip, address[1]))
+            except BaseException:
+                sock.close()
+                raise
         try:
             # HTTPSConnection uses this updated allowance for TLS after TCP.
             sock.settimeout(self.budget.socket_timeout())

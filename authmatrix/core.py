@@ -1,16 +1,17 @@
 """Strict matrix validation, bounded HTTP checks and minimal evidence."""
+import copy
 import hashlib
 import http.client
-import ipaddress
 import json
 import os
 import re
+import ssl
 import time
 from datetime import datetime, timezone
-from urllib.parse import urlsplit
 
 from .json_checks import check_response, error_results, valid_checks
 from . import deadlines
+from .targets import parse_target
 
 
 class ConfigError(ValueError):
@@ -19,8 +20,6 @@ class ConfigError(ValueError):
 
 LABEL = re.compile(r"[a-zA-Z0-9_-]{1,64}\Z")
 ENV = re.compile(r"[A-Z_][A-Z0-9_]{0,127}\Z")
-PRIVATE = tuple(ipaddress.ip_network(n) for n in
-                ("10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "fc00::/7"))
 
 
 def exact(obj, keys):
@@ -34,30 +33,16 @@ def label(value):
 
 
 def validate(matrix):
-    exact(matrix, ("version", "environment", "base_url", "actors", "cases"))
-    if type(matrix["version"]) is not int or matrix["version"] != 1:
+    pin_fields = ("connect_ip",) if isinstance(matrix, dict) and matrix.get("version") == 2 else ()
+    exact(matrix, ("version", "environment", "base_url", "actors", "cases") + pin_fields)
+    if type(matrix["version"]) is not int or matrix["version"] not in (1, 2):
         raise ConfigError("Unsupported matrix version")
     if matrix["environment"] not in ("local", "staging"):
         raise ConfigError("Only local and staging environments are supported")
     try:
-        url = urlsplit(matrix["base_url"])
-        ip = ipaddress.ip_address(url.hostname)
-        port = url.port
+        url = parse_target(matrix).origin
     except (ValueError, TypeError, AttributeError):
-        raise ConfigError("Target must use an explicit loopback or private IP") from None
-    if (url.scheme not in ("http", "https") or url.username is not None
-            or url.password is not None or url.path not in ("", "/")
-            or url.query or url.fragment or port == 0):
-        raise ConfigError("Invalid target origin")
-    # Keep behavior stable across Python ipaddress classification changes.
-    if isinstance(ip, ipaddress.IPv6Address) and (ip.ipv4_mapped or ip.scope_id):
-        raise ConfigError("Mapped and scoped IPv6 targets are unsupported")
-    if ip.is_loopback:
-        pass
-    elif matrix["environment"] != "staging" or not any(ip in net for net in PRIVATE):
-        raise ConfigError("Target outside local/private staging scope")
-    if matrix["environment"] == "staging" and url.scheme != "https":
-        raise ConfigError("Staging requires verified HTTPS")
+        raise ConfigError("Invalid target origin or pinned address") from None
     actors = matrix["actors"]
     if not isinstance(actors, dict) or not 1 <= len(actors) <= 32:
         raise ConfigError("Expected 1-32 actors")
@@ -102,11 +87,18 @@ def fingerprint(matrix):
 
 
 def run(matrix, *, request_timeout=deadlines.DEFAULT_REQUEST_TIMEOUT,
-        run_timeout=deadlines.DEFAULT_RUN_TIMEOUT):
+        run_timeout=deadlines.DEFAULT_RUN_TIMEOUT, ca_file=None):
     request_timeout = deadlines.timeout_seconds(request_timeout)
     run_timeout = deadlines.timeout_seconds(run_timeout)
     run_end = time.monotonic() + run_timeout
-    url = validate(matrix)
+    matrix = copy.deepcopy(matrix)
+    validate(matrix)
+    # Snapshot the validated origin/pin together; never read transport settings
+    # back from mutable configuration while dispatching later requests.
+    target = parse_target(matrix)
+    url = target.origin
+    if ca_file is not None and url.scheme != "https":
+        raise ConfigError("A CA file requires HTTPS")
     # Resolve every credential before issuing any request; never include values in evidence.
     tokens = {}
     for name, actor in matrix["actors"].items():
@@ -115,6 +107,13 @@ def run(matrix, *, request_timeout=deadlines.DEFAULT_REQUEST_TIMEOUT,
         if env and (not token or len(token) > 8192 or any(ord(c) < 33 or ord(c) > 126 for c in token)):
             raise ConfigError("Missing or invalid actor credential")
         tokens[name] = token
+    context = None
+    if ca_file is not None:
+        ca_path = os.fspath(ca_file)
+        if not ca_path:
+            raise ConfigError("Expected a nonempty CA file path")
+        context = ssl.create_default_context(cafile=ca_path)
+        context.set_alpn_protocols(["http/1.1"])
     results = []
     run_exhausted = False
     for case in matrix["cases"]:
@@ -131,7 +130,12 @@ def run(matrix, *, request_timeout=deadlines.DEFAULT_REQUEST_TIMEOUT,
         conn = response = None
         try:
             cls = deadlines.HTTPSConnection if url.scheme == "https" else deadlines.HTTPConnection
-            conn = cls(url.hostname, url.port, budget=budget)
+            options = {}
+            if target.connect_ip is not None:
+                options["connect_ip"] = target.connect_ip
+            if context is not None:
+                options["context"] = context
+            conn = cls(url.hostname, url.port, budget=budget, **options)
             token = tokens[case["actor"]]
             headers = {"Authorization": "Bearer " + token} if token else {}
             conn.request(case["method"], case["path"], headers=headers)
