@@ -16,11 +16,13 @@ python -m pip install ".[test]" -r requirements/packaging.txt
 python -m unittest discover -s tests -v
 python -m build --sdist --wheel --outdir dist
 python -m twine check --strict dist/*.whl dist/*.tar.gz
-python tools/check_dist.py dist
+python tools/check_dist.py dist --require-clean
 ```
 
 Start with a clean `dist/` directory, or use another empty output directory. The
-checker requires exactly one wheel and one source archive. It verifies:
+checker requires exactly one wheel and one source archive. Omit `--require-clean`
+only for local work in progress; CI enforces a clean matching source revision.
+It verifies:
 
 - Name/version/Python requirement, MIT metadata and license bytes, Markdown readme,
   optional-only dependencies, console entry point and all bundled schema resources.

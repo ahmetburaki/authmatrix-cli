@@ -64,8 +64,9 @@ Python 3.11–3.14; see [validation](VALIDATION.md). No real staging API has bee
    - MIT selected; version metadata has one source, with README, license, changelog
      and a reproducible source archive containing the examples and test corpus.
    - Archive inspection, sdist rebuild, isolated dependency-free install, legacy
-     comparison and source-archive test checks passed locally. Hosted checks and
-     candidate review are pending on `chore/first-release-preparation`.
+     comparison and source-archive test checks passed locally. The initial ten-job
+     hosted candidate run and GitGuardian passed; [PR #10](https://github.com/ahmetburaki/authmatrix-cli/pull/10)
+     contains the candidate and current checks for review.
    - See [release procedure](RELEASING.md) and [acceptance](RELEASE_VALIDATION.md).
      Final changelog date, approved tag and publication remain separate steps.
 

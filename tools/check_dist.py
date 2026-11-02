@@ -92,7 +92,7 @@ def inspect_wheel(path, root, version):
 
 def unpack_sdist(path, root, destination, version):
     expected = {"README.md", "LICENSE", "CHANGELOG.md", "CONTRIBUTING.md",
-                "pyproject.toml", "MANIFEST.in", "requirements/packaging.txt"}
+                "pyproject.toml", "MANIFEST.in", ".gitignore", "requirements/packaging.txt"}
     for directory in (PACKAGE, "tests", "examples", "tools", "docs"):
         expected |= source_files(root, directory, {".py", ".json", ".md"})
     allowed = {PACKAGE, "tests", "examples", "tools", "docs", "requirements",
@@ -168,6 +168,8 @@ def isolated_smoke(python, wheel, source, empty, version):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("dist", type=Path)
+    parser.add_argument("--require-clean", action="store_true",
+                        help="Require a clean Git checkout and matching CI revision")
     args = parser.parse_args()
     dist = args.dist.resolve()
     wheels, sdists = sorted(dist.glob("*.whl")), sorted(dist.glob("*.tar.gz"))
@@ -191,13 +193,16 @@ def main():
         isolated_smoke(python, rebuilt_wheels[0], source, empty, version)
         # This also checks that examples/tests/fixtures needed by the suite shipped.
         execute([sys.executable, "-m", "unittest", "discover", "-s", "tests", "-q"], cwd=source)
-    checksums = "".join(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n"
-                        for p in (wheel, sdist))
-    (dist / "SHA256SUMS").write_text(checksums, encoding="utf-8")
     revision = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True,
                               capture_output=True, check=False).stdout.strip() or None
     state = subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, text=True,
                            capture_output=True, check=False)
+    if args.require_clean and (revision is None or state.returncode != 0 or state.stdout.strip()
+                               or os.environ.get("GITHUB_SHA", revision) != revision):
+        raise ValueError("Candidate requires a clean checkout of the expected revision")
+    checksums = "".join(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n"
+                        for p in (wheel, sdist))
+    (dist / "SHA256SUMS").write_text(checksums, encoding="utf-8")
     summary = {"version": version, "license": "MIT", "source_revision": revision,
                "working_tree_dirty": bool(state.stdout.strip()) if state.returncode == 0 else None,
                "runtime_payload_rebuilt": True, "isolated_install_without_dependencies": True,
