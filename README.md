@@ -23,11 +23,14 @@ machine that is `python3.14`; replace `python3` below if your default is older.
 python3 -m venv .venv
 . .venv/bin/activate
 python -m pip install --no-deps .
+authmatrix --version
 authmatrix validate examples/matrix.json
 ```
 
 No runtime dependencies. Installation uses setuptools as the build dependency.
 Alternatively use `python3 -m authmatrix` without installing.
+The project uses the [MIT license](LICENSE). Candidate build and publication gates
+are described in [the release procedure](docs/RELEASING.md) and [changelog](CHANGELOG.md).
 
 For development, install `python -m pip install ".[test]"` and run
 `python -m unittest discover -s tests -v`. Tests also require OpenSSL for disposable

@@ -1,0 +1,3 @@
+# Build/validation tools only; never installed as CLI runtime dependencies.
+build==1.6.1
+twine==7.0.0

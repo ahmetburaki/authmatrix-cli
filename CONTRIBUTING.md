@@ -17,5 +17,6 @@ private API paths, response contents or evidence from real systems. Do not conta
 external targets. A regression test must distinguish the faulty and corrected
 behavior. Consult docs/ROADMAP.md for commit-sized work and acceptance criteria.
 
-This starter has no selected distribution license yet. Choose one before public
-release; do not infer an open-source license from repository visibility.
+This project is licensed under [MIT](LICENSE). Contributions are provided under
+the same license. Follow [the release procedure](docs/RELEASING.md) for version,
+archive and installed-package checks; tagging/publication remains a separate step.

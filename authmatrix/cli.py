@@ -8,6 +8,7 @@ from .core import ConfigError, compare, run, validate
 from .json_checks import strict_json
 from .deadlines import DEFAULT_REQUEST_TIMEOUT, DEFAULT_RUN_TIMEOUT
 from .contracts import get_schema, SCHEMA_FILES
+from . import __version__
 
 
 def load(path):
@@ -26,6 +27,7 @@ def save(path, report):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="authmatrix")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
     contract = sub.add_parser("schema", help="Print a bundled JSON Schema without network access")
     contract.add_argument("kind", choices=SCHEMA_FILES)
