@@ -36,11 +36,11 @@ It verifies:
 - The full test suite also runs from the extracted source archive, checking that
   the release contains the files needed to reproduce the local fixtures.
 
-The checker writes `SHA256SUMS` for the two package files and `BUILD_INFO.json`
-with version, source revision, dirty-tree state and check results. A local dirty
-checkout can be tested while preparing a change; a release candidate must be
-rebuilt from the clean approved source revision. Checksums identify exact files;
-they are not signatures or a claim of bit-for-bit cross-platform reproducibility.
+The checker writes `SHA256SUMS` for the two package files. It uses LF line endings
+on both platforms so the same file can be checked on macOS and Linux. It also
+writes `BUILD_INFO.json` with version, source revision, dirty-tree state and check
+results. A release candidate must be rebuilt from the clean approved source
+revision. Use the checksums to verify the downloaded files from that build.
 
 CI uploads both platform candidates after validation with seven-day retention.
 They are build artifacts for review, not published releases. No PyPI credentials

@@ -53,6 +53,14 @@ jobs:
       - run: python -m build --sdist --wheel --outdir dist
       - run: python -m twine check --strict dist/*.whl dist/*.tar.gz
       - run: python tools/check_dist.py dist --require-clean
+      - name: Verify portable checksum manifest
+        run: |
+          python -c "
+          from pathlib import Path
+          manifest = Path('dist/SHA256SUMS').read_bytes()
+          if b'\r' in manifest:
+              raise SystemExit('SHA256SUMS must use LF line endings')
+          "
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2, Node 24
         with:
           name: authmatrix-candidate-${{ matrix.os }}-${{ github.sha }}
