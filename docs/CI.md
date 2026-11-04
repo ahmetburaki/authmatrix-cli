@@ -23,16 +23,24 @@ keys. No staging or production credentials are provided. The workflow grants onl
 `contents: read`, opts out of persisting checkout credentials and uses ordinary
 `pull_request` events. It does not use privileged `pull_request_target` execution.
 
+After the runtime matrix passes, two distribution jobs on Ubuntu/Windows Python
+3.14 build the wheel/source archive, check metadata and contents, rebuild/install
+from the source archive and run its full test suite. Their candidate artifacts
+contain both packages, SHA256SUMS and BUILD_INFO.json, retained for seven days.
+This adds two package checks to the eight runtime jobs and does not publish a
+release. See [release gates](RELEASING.md) and [acceptance](RELEASE_VALIDATION.md).
+
 ## Pinned upstream actions
 
 | Action | Reviewed release | Exact commit |
 | --- | --- | --- |
 | Checkout | [v7.0.1](https://github.com/actions/checkout/releases/tag/v7.0.1) | `3d3c42e5aac5ba805825da76410c181273ba90b1` |
 | Python setup | [v7.1.0](https://github.com/actions/setup-python/releases/tag/v7.1.0) | `6d4fd22b20465ccc0f7354476588e8df7c9ca0e0` |
+| Candidate artifact upload | [v7.0.2](https://github.com/actions/upload-artifact/releases/tag/v7.0.2) | `cf430e030ddbb5b0abf93d22962f4752f3646cd9` |
 
 The selected [checkout](https://github.com/actions/checkout/blob/3d3c42e5aac5ba805825da76410c181273ba90b1/action.yml)
 and [Python setup](https://github.com/actions/setup-python/blob/6d4fd22b20465ccc0f7354476588e8df7c9ca0e0/action.yml)
-manifests use Node 24. These replace the old Node 20 action
+manifests and the pinned artifact-upload manifest use Node 24. Checkout/setup replace the old Node 20 action
 versions that emitted deprecation annotations. Full commit pins fix the code that
 runs; version comments make future updates identifiable. GitHub-hosted runners
 provide the required runtime. For self-hosted use, check the upstream minimum

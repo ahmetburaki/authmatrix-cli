@@ -44,14 +44,14 @@ Python 3.11–3.14; see [validation](VALIDATION.md). No real staging API has bee
      see [acceptance](DEADLINE_VALIDATION.md).
    - See [deadline contract](DEADLINES.md).
 5. **Implemented: Pinned hostname staging support** (`feat: pin validated staging addresses`)
-   - Implemented on `feat/pinned-staging-hostnames`: version-2 HTTPS hostname
+   - Merged into `main`: version-2 HTTPS hostname
      origins with explicit private/loopback pins, preserved SNI/Host and optional CA files.
    - DNS is never consulted. Validation, TLS identity, proxy/redirect, deadline,
      evidence privacy, comparison and legacy compatibility tests cover the boundary.
    - All 79 tests passed locally and on Ubuntu/Windows Python 3.11–3.14;
      cleaned-history CI and GitGuardian checks passed. Real IPv6 TLS was verified
      in every hosted platform/version. [PR #9](https://github.com/ahmetburaki/authmatrix-cli/pull/9)
-     targets main and is ready for review; see [contract](HOSTNAMES.md) and
+     merged on November 3; see [contract](HOSTNAMES.md) and
      [acceptance](HOSTNAME_VALIDATION.md).
 6. **Implemented: Publish machine-readable contracts** (`feat: export bundled JSON schemas`)
    - Merged into `main`: self-contained matrix/evidence
@@ -60,13 +60,19 @@ Python 3.11–3.14; see [validation](VALIDATION.md). No real staging API has bee
      base-package exports work without the optional test validator.
      [PR #7](https://github.com/ahmetburaki/authmatrix-cli/pull/7) merged on October 31.
    - See [contracts](SCHEMAS.md) and [acceptance](SCHEMA_VALIDATION.md).
-7. **Issue: Prepare first tagged release** (`chore: prepare release artifacts`)
-   - Select license, verify packaging and installed CLI on clean supported Python
-     versions; review evidence and document changelog. Publish only after CI passes.
+7. **Implemented candidate preparation: First tagged release** (`chore: prepare release artifacts`)
+   - MIT selected; version metadata has one source, with README, license, changelog
+     and a reproducible source archive containing the examples and test corpus.
+   - Archive inspection, sdist rebuild, isolated dependency-free install, legacy
+     comparison and source-archive test checks passed locally. The initial ten-job
+     hosted candidate run and GitGuardian passed; [PR #10](https://github.com/ahmetburaki/authmatrix-cli/pull/10)
+     contains the candidate and current checks for review.
+   - See [release procedure](RELEASING.md) and [acceptance](RELEASE_VALIDATION.md).
+     Final changelog date, approved tag and publication remain separate steps.
 
 ## Current main and GitHub cadence
 
-PRs #4–#7 are integrated. All 63 tests passed locally and across the eight
+PRs #4–#9 are integrated. All 79 tests passed locally and across the eight
 Ubuntu/Windows Python 3.11–3.14 jobs on the merged main revision. See
 [integration acceptance](INTEGRATION.md) and the [CI contract](CI.md).
 
@@ -74,5 +80,5 @@ Each issue should become one focused branch/PR with a failing reproduction,
 implementation, relevant tests and a short explanation of behavior and limits.
 Use real completed work as the activity record. Keep credential files and local
 run evidence out of commits. Use `ahmetburaki/authmatrix-cli` as the origin. Review hosted CI results for each
-commit before building on it. Release tags still require a selected distribution
-license, current packaging checks and a changelog; the earlier hosted M0 checks passed.
+commit before building on it. MIT is selected. Release tags still require current
+packaging checks, finalized changelog and an approved source revision.

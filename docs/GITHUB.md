@@ -14,11 +14,13 @@ combined tree passed all 63 tests locally and all eight Ubuntu/Windows Python
 | Request/run deadlines | [#6](https://github.com/ahmetburaki/authmatrix-cli/pull/6) | [Issue #3](https://github.com/ahmetburaki/authmatrix-cli/issues/3) closed |
 | Offline JSON Schema contracts | [#7](https://github.com/ahmetburaki/authmatrix-cli/pull/7) | Implemented on main |
 
-M1 is complete and closed. M2 remains open for the remaining operational work,
-including hostname staging design and first-release preparation. See the
+PR #8 integrated CI/documentation maintenance on November 1. PR #9 integrated
+pinned hostname staging support on November 3; all 79 tests passed in main CI.
+M1 is complete and closed. M2 remains open for first-release completion. See the
 [roadmap](ROADMAP.md) for acceptance criteria and commit-sized tasks.
 
 Create focused PRs against main and inspect every supported CI job. Keep private
 credentials and real-system evidence out of commits. Do not open implementation
-issues for work already completed. Choose a distribution license and complete
-release checks before tagging a release. No release was published by integration.
+issues for work already completed. Complete release checks before tagging a
+release. MIT is now selected for the candidate;
+no release was published by integration. See [release preparation](RELEASE_VALIDATION.md).
