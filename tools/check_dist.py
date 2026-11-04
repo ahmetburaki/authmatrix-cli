@@ -202,7 +202,7 @@ def main():
         raise ValueError("Candidate requires a clean checkout of the expected revision")
     checksums = "".join(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n"
                         for p in (wheel, sdist))
-    (dist / "SHA256SUMS").write_text(checksums, encoding="utf-8")
+    (dist / "SHA256SUMS").write_text(checksums, encoding="utf-8", newline="\n")
     summary = {"version": version, "license": "MIT", "source_revision": revision,
                "working_tree_dirty": bool(state.stdout.strip()) if state.returncode == 0 else None,
                "runtime_payload_rebuilt": True, "isolated_install_without_dependencies": True,
