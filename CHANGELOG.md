@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 — candidate, not published
+## 0.1.0 — 2026-11-04
 
 ### Added
 
@@ -21,6 +21,3 @@ Python 3.11–3.14; local and authorized private staging APIs; GET/HEAD only. Ev
 is unsigned regression data and covers declared cases. Production, endpoint
 discovery, mutation methods, redirects/proxies and TLS bypasses are outside scope.
 Deadlines bound network execution; local work and scheduling are not preempted.
-
-This candidate has no release tag or package-index publication. Finalize the
-release date and reviewed source revision through [the release procedure](docs/RELEASING.md).

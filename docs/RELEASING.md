@@ -1,10 +1,9 @@
 # Preparing and publishing a release
 
-The first candidate is 0.1.0 under the [MIT license](../LICENSE). Version reporting
-and distribution metadata read the single literal `authmatrix.__version__` value.
+AuthMatrix CLI uses the [MIT license](../LICENSE). Version reporting and
+distribution metadata read the single literal `authmatrix.__version__` value.
 The software version is independent of matrix versions 1/2 and evidence schema 3.
 This procedure separates validated candidate files from an approved release tag.
-The current work does not create a tag, GitHub release or PyPI publication.
 
 ## Build and validate a candidate
 
