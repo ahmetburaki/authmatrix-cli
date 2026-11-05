@@ -62,3 +62,35 @@ documented XML subset. [GitLab unit test reports](https://docs.gitlab.com/ci/tes
 The repository tests parse exported XML, exercise the local before/after CLI
 flow, verify legacy/current inputs from an installed package and check the
 dependency-free console command from rebuilt archives on Ubuntu and Windows.
+
+## Hosted GitHub Actions acceptance
+
+The `junit-report` job installs the base package and runs
+`tools/check_junit_ci.py`. It starts the bundled loopback API, runs the installed
+CLI against the vulnerable and fixed modes, exports both reports and verifies
+the expected fix through comparison. Stored synthetic timeout and `not_run`
+evidence also passes through the installed exporter.
+
+The checker parses the XML, checks every actor/case outcome and suite count
+against the fixture expectations, and writes a Markdown table to
+`GITHUB_STEP_SUMMARY`. GitHub displays this table on the workflow run summary.
+[GitHub job summaries](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#adding-a-job-summary)
+
+The vulnerable scenario has one expected failure, while the fixed scenario has
+three passing cases. Each stored execution-error scenario has one expected
+error. The acceptance job succeeds when all four scenarios match those
+expectations and comparison confirms the cross-owner fix. Any unexpected exit
+code, XML outcome or count fails the job.
+
+The job uploads the four XML files, comparison result and summary with seven-day
+retention. Its upload step also runs after a failed acceptance check, so partial
+outputs can be inspected. Artifacts contain synthetic data from this fixture.
+
+To reproduce the acceptance locally after installing the package, choose a new
+output directory.
+
+```sh
+python tools/check_junit_ci.py --output evidence/junit-ci
+```
+
+The output's `summary.md` contains the same table used by GitHub.

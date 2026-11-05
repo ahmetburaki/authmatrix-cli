@@ -32,6 +32,14 @@ contain both packages, SHA256SUMS and BUILD_INFO.json, retained for seven days.
 This adds two package checks to the eight runtime jobs and does not publish a
 release. See [release gates](RELEASING.md) and [acceptance](RELEASE_VALIDATION.md).
 
+A `junit-report` job on Ubuntu/Python 3.14 adds hosted report acceptance after
+the runtime matrix, bringing the workflow to eleven jobs. The installed CLI runs
+the loopback vulnerable/fixed fixture and exports its evidence alongside stored
+synthetic timeout/not_run scenarios. The checker verifies exact exit codes,
+case outcomes, counts and proof comparison before writing a table to the GitHub
+run summary. Four XML files, the comparison result and summary are retained as
+an artifact for seven days. See [JUnit acceptance](JUNIT.md#hosted-github-actions-acceptance).
+
 ## Pinned upstream actions
 
 | Action | Reviewed release | Exact commit |

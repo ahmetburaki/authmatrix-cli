@@ -73,14 +73,18 @@ Python 3.11–3.14; see [validation](VALIDATION.md). No real staging API has bee
 ## M3 — CI-ready reporting (in progress)
 
 8. **[Issue #13: Export validated evidence as JUnit XML](https://github.com/ahmetburaki/authmatrix-cli/issues/13)**
-   - `feat: export offline JUnit reports` shares strict source coverage validation
-     with comparison and preserves pass/fail/error exit codes.
-   - `test: verify installed JUnit exports` covers schemas 1/2/3, incomplete and
-     inconsistent inputs, 200 cases, concurrent output creation and package installs.
-   - `docs: explain JUnit CI collection` documents minimized output, error mapping,
-     artifact collection and the stable/development version boundary.
-   - Acceptance requires all runtime and package jobs to pass. See the
-     [JUnit contract](JUNIT.md).
+   - [PR #14](https://github.com/ahmetburaki/authmatrix-cli/pull/14) merged on
+     November 6, 2026 with shared strict coverage validation and 0/1/2 exit codes.
+   - All 91 tests, ten hosted jobs and GitGuardian passed on the PR. Package
+     artifacts passed checksum/provenance checks on both platforms.
+   - See the [JUnit contract](JUNIT.md).
+9. **[Issue #15: Validate JUnit reports in the GitHub Actions summary](https://github.com/ahmetburaki/authmatrix-cli/issues/15)**
+   - `ci: display synthetic JUnit acceptance` exercises installed CLI commands,
+     exact exit codes, XML outcomes/counts and proof comparison in a hosted job.
+   - `docs: explain hosted JUnit acceptance` documents the expected failure/error
+     scenarios, downloadable XML and rendered workflow summary.
+   - Acceptance includes observing the hosted table and verifying its artifact
+     against the tested source revision.
 
 ## Current main and GitHub cadence
 
