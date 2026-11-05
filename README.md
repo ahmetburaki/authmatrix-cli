@@ -5,6 +5,9 @@ owned local and private staging APIs. AuthMatrix CLI is a standalone project
 with its own package, command-line interface and release roadmap. The name is
 provisional.
 
+The [latest stable release is v0.1.0](https://github.com/ahmetburaki/authmatrix-cli/releases/tag/v0.1.0).
+The source checkout tracks 0.2.0.dev0, including offline JUnit reporting.
+
 The JSON assertion, tenant/role, deadline and schema features are integrated into
 `main`; see [integration acceptance](docs/INTEGRATION.md). Current CI covers all
 eight Ubuntu/Windows Python 3.11–3.14 combinations; see [CI checks](docs/CI.md).
@@ -83,6 +86,11 @@ Use owner, other-owner, anonymous, role and tenant cases explicitly. Include
 positive controls so denial of every request cannot make the whole suite pass.
 For APIs returning 200 with unauthorized fields, add [JSON assertions](docs/JSON_ASSERTIONS.md)
 for field presence, absence or scalar equality; see [examples/json-matrix.json](examples/json-matrix.json).
+
+Export a run for CI test-result collection with
+`authmatrix junit evidence/after.json --matrix examples/matrix.json --output evidence/after.xml`.
+The [JUnit guide](docs/JUNIT.md) describes source validation, outcome mapping,
+exit codes and private output.
 Do not accept 200 and 403 together for a denial case.
 
 For a staging service identified by its TLS hostname, use [matrix version 2](docs/HOSTNAMES.md)
@@ -145,6 +153,7 @@ is unsigned local data; this is regression validation, not independent attestati
 | validate | valid | — | invalid input |
 | run | all passed | expectation mismatch | transport/response/config/output error |
 | compare | demonstrated fix, all pass | no demonstrated complete fix | invalid/incompatible evidence |
+| junit | XML written, all cases pass | XML written, expectation mismatch | XML with execution errors, or input/output error |
 
 See [roadmap](docs/ROADMAP.md), [contributing](CONTRIBUTING.md) and
 [engineering decisions](docs/DECISIONS.md). Current focus: quality, reproducibility,
