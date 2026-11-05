@@ -13,6 +13,7 @@ import sys
 import tarfile
 import tempfile
 import zipfile
+import xml.etree.ElementTree as ET
 
 from packaging.requirements import Requirement
 
@@ -156,6 +157,13 @@ def isolated_smoke(python, wheel, source, empty, version):
     for matrix in sorted((source / "examples").glob("*matrix.json")):
         execute(command + ["validate", matrix], cwd=empty)
     fixtures = source / "tests" / "fixtures" / "contracts"
+    junit = empty / "junit.xml"
+    execute([cli, "junit", fixtures / "report-v3-status.json",
+             "--matrix", fixtures / "matrix-status.json", "--output", junit], cwd=empty)
+    suite = ET.parse(junit).find("testsuite")
+    if suite is None or suite.attrib != {
+            "name": "authmatrix", "tests": "1", "failures": "0", "errors": "0"}:
+        raise ValueError("Installed JUnit export failed")
     for before, after, matrix in (
             ("report-v1.json", "report-v3-status.json", "matrix-status.json"),
             ("report-v2.json", "report-v3-asserted.json", "matrix-asserted.json")):

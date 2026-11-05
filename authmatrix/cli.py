@@ -8,6 +8,7 @@ from .core import ConfigError, compare, run, validate
 from .json_checks import strict_json
 from .deadlines import DEFAULT_REQUEST_TIMEOUT, DEFAULT_RUN_TIMEOUT
 from .contracts import get_schema, SCHEMA_FILES
+from .junit import junit_xml
 from . import __version__
 
 
@@ -46,6 +47,10 @@ def main(argv=None):
     diff.add_argument("before")
     diff.add_argument("after")
     diff.add_argument("--matrix", required=True, help="Source matrix used by both runs")
+    junit = sub.add_parser("junit", help="Export validated evidence as JUnit XML offline")
+    junit.add_argument("evidence")
+    junit.add_argument("--matrix", required=True, help="Source matrix used by this run")
+    junit.add_argument("--output", required=True)
     args = parser.parse_args(argv)
     try:
         if args.command == "schema":
@@ -55,6 +60,16 @@ def main(argv=None):
             validate(load(args.matrix))
             print("Matrix valid (no requests sent)")
             return 0
+        if args.command == "junit":
+            report = load(args.evidence)
+            document = junit_xml(report, load(args.matrix))
+            fd = os.open(args.output, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(fd, "wb") as out:
+                out.write(document)
+            counts = {state: sum(c["outcome"] == state for c in report["cases"])
+                      for state in ("pass", "fail", "error")}
+            print(json.dumps(counts))
+            return 2 if counts["error"] else 1 if counts["fail"] else 0
         if args.command == "run":
             if not args.authorized:
                 raise ConfigError("Explicit --authorized confirmation is required")

@@ -7,6 +7,7 @@ from pathlib import Path
 import tempfile
 import threading
 import unittest
+import xml.etree.ElementTree as ET
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from unittest.mock import patch
 
@@ -173,6 +174,14 @@ class CoreTests(unittest.TestCase):
             self.server.vulnerable = False
             self.assertEqual(main(["run", str(matrix), "--authorized", "--output", str(after)]), 0)
             self.assertEqual(main(["compare", str(before), str(after), "--matrix", str(matrix)]), 0)
+            for report, code in ((before, 1), (after, 0)):
+                xml = root / f"{report.stem}.xml"
+                self.assertEqual(main(["junit", str(report), "--matrix", str(matrix),
+                                       "--output", str(xml)]), code)
+                suite = ET.parse(xml).find("testsuite")
+                self.assertEqual(suite.attrib["tests"], "3")
+                self.assertEqual(suite.attrib["failures"], str(code))
+                self.assertEqual(suite.attrib["errors"], "0")
             self.assertEqual(main(["compare", str(after), str(after), "--matrix", str(matrix)]), 1)
             original = before.read_bytes()
             self.assertEqual(main(["run", str(matrix), "--authorized", "--output", str(before)]), 2)

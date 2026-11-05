@@ -239,29 +239,33 @@ def check_report(report):
     return report
 
 
-def compare(before, after, matrix):
+def check_report_against_matrix(report, matrix):
     # Offline coverage validation needs no credentials or network access.
     validate(matrix)
-    check_report(before)
-    check_report(after)
+    check_report(report)
     digest = fingerprint(matrix)
     definitions = {c["id"]: c for c in matrix["cases"]}
     version = 2 if any("assert_json" in c for c in matrix["cases"]) else 1
-    for report in (before, after):
-        if report["matrix_sha256"] != digest or report["schema_version"] not in (version, 3):
-            raise ConfigError("Evidence does not match the source matrix")
-        observed = {c["id"]: c for c in report["cases"]}
-        if observed.keys() != definitions.keys() or any(
-            (observed[k]["actor"], observed[k]["expected"]) !=
-            (definitions[k]["actor"], definitions[k]["expect_status"]) for k in definitions
-        ):
-            raise ConfigError("Evidence does not cover the source matrix")
-        for name, definition in definitions.items():
-            checks = definition.get("assert_json", [])
-            evidence = observed[name]
-            if (("assertions" in evidence) != bool(checks) or
-                    [a["id"] for a in evidence.get("assertions", [])] != [a["id"] for a in checks]):
-                raise ConfigError("Evidence does not cover the source assertions")
+    if report["matrix_sha256"] != digest or report["schema_version"] not in (version, 3):
+        raise ConfigError("Evidence does not match the source matrix")
+    observed = {c["id"]: c for c in report["cases"]}
+    if observed.keys() != definitions.keys() or any(
+        (observed[k]["actor"], observed[k]["expected"]) !=
+        (definitions[k]["actor"], definitions[k]["expect_status"]) for k in definitions
+    ):
+        raise ConfigError("Evidence does not cover the source matrix")
+    for name, definition in definitions.items():
+        checks = definition.get("assert_json", [])
+        evidence = observed[name]
+        if (("assertions" in evidence) != bool(checks) or
+                [a["id"] for a in evidence.get("assertions", [])] != [a["id"] for a in checks]):
+            raise ConfigError("Evidence does not cover the source assertions")
+    return report
+
+
+def compare(before, after, matrix):
+    check_report_against_matrix(before, matrix)
+    check_report_against_matrix(after, matrix)
     old = {c["id"]: c for c in before["cases"]}
     new = {c["id"]: c for c in after["cases"]}
     if old.keys() != new.keys() or any(
