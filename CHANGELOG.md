@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased — 0.2.0.dev0
+
+### Added
+
+- Offline JUnit XML export with strict source-matrix coverage validation, legacy
+  evidence support, minimized failure details and exclusive private output.
+- Installed-CLI and distribution checks for the new export command.
+
 ## 0.1.0 — 2026-11-04
 
 ### Added

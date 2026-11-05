@@ -34,7 +34,7 @@ Python 3.11–3.14; see [validation](VALIDATION.md). No real staging API has bee
    - Verified: missing/renamed cases, altered actors/expectations and changed source matrices are rejected.
    - This does not replace future signing or establish independent trust.
 
-## M2 — Operational hardening
+## M2 — Operational hardening (complete)
 
 4. **[Issue #3: Enforce wall-clock run and request deadlines](https://github.com/ahmetburaki/authmatrix-cli/issues/3)** (`feat: bound total execution time`)
    - Merged into `main`: shared monotonic request/run budgets,
@@ -60,20 +60,32 @@ Python 3.11–3.14; see [validation](VALIDATION.md). No real staging API has bee
      base-package exports work without the optional test validator.
      [PR #7](https://github.com/ahmetburaki/authmatrix-cli/pull/7) merged on October 31.
    - See [contracts](SCHEMAS.md) and [acceptance](SCHEMA_VALIDATION.md).
-7. **Implemented candidate preparation: First tagged release** (`chore: prepare release artifacts`)
+7. **Released: First tagged release** (`chore: prepare release artifacts`)
    - MIT selected; version metadata has one source, with README, license, changelog
      and a reproducible source archive containing the examples and test corpus.
-   - Archive inspection, sdist rebuild, isolated dependency-free install, legacy
-     comparison and source-archive test checks passed locally. The initial ten-job
-     hosted candidate run and GitGuardian passed; [PR #10](https://github.com/ahmetburaki/authmatrix-cli/pull/10)
-     contains the candidate and current checks for review.
-   - See [release procedure](RELEASING.md) and [acceptance](RELEASE_VALIDATION.md).
-     Final changelog date, approved tag and publication remain separate steps.
+   - PRs #10–#12 integrated packaging, portable checksums and final release notes.
+     All ten jobs passed on the approved main commit and its tag. Both platform
+     candidates were downloaded and verified. The public wheel was installed
+     from the released asset in a clean environment.
+   - [v0.1.0](https://github.com/ahmetburaki/authmatrix-cli/releases/tag/v0.1.0)
+     was published on November 4, 2026. M2 is closed.
+
+## M3 — CI-ready reporting (in progress)
+
+8. **[Issue #13: Export validated evidence as JUnit XML](https://github.com/ahmetburaki/authmatrix-cli/issues/13)**
+   - `feat: export offline JUnit reports` shares strict source coverage validation
+     with comparison and preserves pass/fail/error exit codes.
+   - `test: verify installed JUnit exports` covers schemas 1/2/3, incomplete and
+     inconsistent inputs, 200 cases, concurrent output creation and package installs.
+   - `docs: explain JUnit CI collection` documents minimized output, error mapping,
+     artifact collection and the stable/development version boundary.
+   - Acceptance requires all runtime and package jobs to pass. See the
+     [JUnit contract](JUNIT.md).
 
 ## Current main and GitHub cadence
 
-PRs #4–#9 are integrated. All 79 tests passed locally and across the eight
-Ubuntu/Windows Python 3.11–3.14 jobs on the merged main revision. See
+PRs #4–#12 are integrated. All 79 tests passed locally and across the eight
+Ubuntu/Windows Python 3.11–3.14 jobs on the v0.1.0 release revision. See
 [integration acceptance](INTEGRATION.md) and the [CI contract](CI.md).
 
 Each issue should become one focused branch/PR with a failing reproduction,

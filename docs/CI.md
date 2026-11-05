@@ -15,7 +15,8 @@ outer limit and performs these checks:
 1. Install the base package without runtime dependencies.
 2. Export both schemas with optional validator imports blocked, using isolated
    Python imports so the installed package supplies the assets.
-3. Install the test extra and run the full integration/contract suite.
+3. Install the test extra and run the full integration/contract suite, including
+   isolated installed-module JUnit exports for legacy and current evidence.
 4. Validate the status, JSON-assertion, tenant/role and pinned-hostname matrices.
 
 Tests use synthetic loopback HTTP/TLS fixtures. OpenSSL generates disposable TLS
@@ -25,7 +26,8 @@ keys. No staging or production credentials are provided. The workflow grants onl
 
 After the runtime matrix passes, two distribution jobs on Ubuntu/Windows Python
 3.14 build the wheel/source archive, check metadata and contents, rebuild/install
-from the source archive and run its full test suite. Their candidate artifacts
+from the source archive, export JUnit through the installed console command and
+run the archive's full test suite. Their candidate artifacts
 contain both packages, SHA256SUMS and BUILD_INFO.json, retained for seven days.
 This adds two package checks to the eight runtime jobs and does not publish a
 release. See [release gates](RELEASING.md) and [acceptance](RELEASE_VALIDATION.md).
