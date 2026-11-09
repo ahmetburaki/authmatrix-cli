@@ -16,8 +16,7 @@ combined tree passed all 63 tests locally and all eight Ubuntu/Windows Python
 
 PR #8 integrated CI/documentation maintenance on November 1. PR #9 integrated
 pinned hostname staging support on November 3; all 79 tests passed in main CI.
-M1 is complete and closed. M2 remains open for first-release completion. See the
-[roadmap](ROADMAP.md) for acceptance criteria and commit-sized tasks.
+M1 is complete and closed. M2 remains open for first-release completion.
 
 Create focused PRs against main and inspect every supported CI job. Keep private
 credentials and real-system evidence out of commits. Do not open implementation
