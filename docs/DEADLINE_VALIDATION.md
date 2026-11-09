@@ -61,7 +61,7 @@ exposes the limits, and `json_checks.py` propagates deadline errors. Regression
 coverage is in `tests/test_deadlines.py`, with evidence-version expectations in
 `test_json_checks.py` and the POSIX-only permission check in `test_core.py`.
 The CI workflow adds Windows to the supported Python matrix. README, contributor
-instructions and the deadline/evidence/roadmap documents describe these contracts.
+instructions and the deadline and evidence documents describe these contracts.
 
 The following gates passed (use an activated Python 3.11+ environment):
 
