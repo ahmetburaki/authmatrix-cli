@@ -2,7 +2,7 @@
 
 A dependency-free Python CLI for explicit API authorization regression checks on
 owned local and private staging APIs. AuthMatrix CLI is a standalone project
-with its own package, command-line interface and release roadmap. The name is
+with its own package, command-line interface and release workflow. The name is
 provisional.
 
 The [latest stable release is v0.1.0](https://github.com/ahmetburaki/authmatrix-cli/releases/tag/v0.1.0).
