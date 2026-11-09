@@ -15,8 +15,7 @@ combined tree passed all 63 tests locally and all eight Ubuntu/Windows Python
 | Offline JSON Schema contracts | [#7](https://github.com/ahmetburaki/authmatrix-cli/pull/7) | Implemented on main |
 
 M1 is complete and closed. M2 remains open for the remaining operational work,
-including hostname staging design and first-release preparation. See the
-[roadmap](ROADMAP.md) for acceptance criteria and commit-sized tasks.
+including hostname staging design and first-release preparation.
 
 Create focused PRs against main and inspect every supported CI job. Keep private
 credentials and real-system evidence out of commits. Do not open implementation

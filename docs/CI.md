@@ -56,5 +56,4 @@ git diff --check
 ```
 
 The default installation is tested before installing extras in CI. See
-[contributing](../CONTRIBUTING.md) for local TLS prerequisites and
-[the roadmap](ROADMAP.md) for remaining release gates.
+[contributing](../CONTRIBUTING.md) for local TLS prerequisites.
