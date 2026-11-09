@@ -37,4 +37,4 @@ whole-request and whole-run budgets. Accept when slow-header and slow-body
 fixtures terminate within the documented budget with truthful error evidence.
 
 The source-matrix coverage feature is already implemented locally. Do not create
-an open implementation issue for completed work. ROADMAP.md lists later tasks.
+an open implementation issue for completed work.
