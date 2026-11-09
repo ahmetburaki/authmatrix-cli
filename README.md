@@ -154,11 +154,3 @@ is unsigned local data; this is regression validation, not independent attestati
 | run | all passed | expectation mismatch | transport/response/config/output error |
 | compare | demonstrated fix, all pass | no demonstrated complete fix | invalid/incompatible evidence |
 | junit | XML written, all cases pass | XML written, expectation mismatch | XML with execution errors, or input/output error |
-
-See [roadmap](docs/ROADMAP.md), [contributing](CONTRIBUTING.md) and
-[engineering decisions](docs/DECISIONS.md). Current focus: quality, reproducibility,
-reviewable GitHub changes. No acquisition, revenue, marketing or outreach work.
-
-Repository: [ahmetburaki/authmatrix-cli](https://github.com/ahmetburaki/authmatrix-cli).
-See [open issues](https://github.com/ahmetburaki/authmatrix-cli/issues) and
-[milestones](https://github.com/ahmetburaki/authmatrix-cli/milestones) for the next work.
