@@ -39,5 +39,5 @@ ran all 16 tests and validated the example matrix using the installed CLI.
 - Repository `ahmetburaki/authmatrix-cli` created with two milestones and three issues.
   License remains unselected.
 
-See ROADMAP.md for issue drafts and acceptance criteria. This is a tested local
+This is a tested local
 MVP, not a published release or a claim of comprehensive API security coverage.
