@@ -7,6 +7,8 @@
 - Offline JUnit XML export with strict source-matrix coverage validation, legacy
   evidence support, minimized failure details and exclusive private output.
 - Installed-CLI and distribution checks for the new export command.
+- Synthetic JUnit acceptance in the GitHub Actions summary, with downloadable
+  XML for vulnerable/fixed API and stored execution-error scenarios.
 
 ## 0.1.0 — 2026-11-04
 

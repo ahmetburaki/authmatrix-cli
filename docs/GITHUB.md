@@ -31,4 +31,7 @@ published on November 4, 2026 after all ten main and tag CI jobs passed.
 
 M3 tracks CI-ready reporting. [Issue #13](https://github.com/ahmetburaki/authmatrix-cli/issues/13)
 adds offline JUnit export with shared evidence-to-matrix validation and
-installed-package checks.
+installed-package checks. It closed when
+[PR #14](https://github.com/ahmetburaki/authmatrix-cli/pull/14) merged on November 6.
+[Issue #15](https://github.com/ahmetburaki/authmatrix-cli/issues/15) tracks the
+hosted GitHub Actions report summary and artifact acceptance.
