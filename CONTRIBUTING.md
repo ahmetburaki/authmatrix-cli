@@ -9,7 +9,7 @@ to generate disposable loopback certificates; the CLI itself has no OpenSSL comm
 Use only synthetic local fixtures in tests and CI. Never include real credentials,
 private API paths, response contents or evidence from real systems. Do not contact
 external targets. A regression test must distinguish the faulty and corrected
-behavior. Consult docs/ROADMAP.md for commit-sized work and acceptance criteria.
+behavior. Record acceptance criteria in the related issue or PR.
 
 This starter has no selected distribution license yet. Choose one before public
 release; do not infer an open-source license from repository visibility.

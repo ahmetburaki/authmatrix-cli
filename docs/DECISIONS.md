@@ -4,7 +4,7 @@
 
 Start a standalone repository for developer-focused API authorization regression
 checks and proof-of-fix evidence. The project owns its package, CLI, configuration,
-CI and release roadmap. AuthMatrix CLI is a provisional name. The first milestone
+CI and release workflow. AuthMatrix CLI is a provisional name. The first milestone
 prioritizes a reliable local workflow and reproducible tests.
 
 ## 002 — Standard library and narrow network boundary

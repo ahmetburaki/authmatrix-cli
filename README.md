@@ -2,7 +2,7 @@
 
 A dependency-free Python CLI for explicit API authorization regression checks on
 owned local and private staging APIs. AuthMatrix CLI is a standalone project
-with its own package, command-line interface and release roadmap. The name is
+with its own package, command-line interface and release workflow. The name is
 provisional.
 
 Define actor/resource expectations, detect a mismatch, apply your API fix, rerun
@@ -123,11 +123,3 @@ is unsigned local data; this is regression validation, not independent attestati
 | validate | valid | — | invalid input |
 | run | all passed | expectation mismatch | transport/response/config/output error |
 | compare | demonstrated fix, all pass | no demonstrated complete fix | invalid/incompatible evidence |
-
-See [roadmap](docs/ROADMAP.md), [contributing](CONTRIBUTING.md) and
-[engineering decisions](docs/DECISIONS.md). Current focus: quality, reproducibility,
-reviewable GitHub changes. No acquisition, revenue, marketing or outreach work.
-
-Repository: [ahmetburaki/authmatrix-cli](https://github.com/ahmetburaki/authmatrix-cli).
-See [open issues](https://github.com/ahmetburaki/authmatrix-cli/issues) and
-[milestones](https://github.com/ahmetburaki/authmatrix-cli/milestones) for the next work.

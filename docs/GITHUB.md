@@ -39,4 +39,4 @@ slow-header/body/framing/TLS regressions and truthful partial evidence. See
 review and merge in order #4, #5, #6.
 
 The source-matrix coverage feature is already implemented locally. Do not create
-an open implementation issue for completed work. ROADMAP.md lists later tasks.
+an open implementation issue for completed work.
