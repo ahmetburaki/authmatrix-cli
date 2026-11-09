@@ -8,7 +8,7 @@ relevant verification in PRs. Run `python3 -m unittest discover -s tests -v` and
 Use only synthetic local fixtures in tests and CI. Never include real credentials,
 private API paths, response contents or evidence from real systems. Do not contact
 external targets. A regression test must distinguish the faulty and corrected
-behavior. Consult docs/ROADMAP.md for commit-sized work and acceptance criteria.
+behavior. Record acceptance criteria in the related issue or PR.
 
 This starter has no selected distribution license yet. Choose one before public
 release; do not infer an open-source license from repository visibility.
